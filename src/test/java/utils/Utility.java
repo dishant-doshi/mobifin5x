@@ -21,13 +21,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
-import java.util.TimeZone;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
 public class Utility {
-	
-	
+
 	public static String millisToTimeConversion(long seconds) {
 		final int MINUTES_IN_AN_HOUR = 60;
 		final int SECONDS_IN_A_MINUTE = 60;
@@ -83,7 +81,7 @@ public class Utility {
 	}
 
 	/**
-	 * @author vivek.mishra
+	 * @author dishant.doshi
 	 * @param node1
 	 *            top node
 	 * @param node2
@@ -94,7 +92,7 @@ public class Utility {
 	public static String getTestData(String fileName, String node1, String node2) {
 		return new ReadXMLData(fileName).get(node1, node2);
 	}
-	
+
 	/**
 	 * Returns a pseudo-random number between min and max, inclusive. The difference
 	 * between min and max can be at most <code>Integer.MAX_VALUE - 1</code>.
@@ -127,14 +125,6 @@ public class Utility {
 		if (str.endsWith(","))
 			str = str.substring(0, str.length() - 1);
 		return str;
-	}
-
-	public static String getCurrentDate() {
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-		Date date = new Date();
-		return dateFormat.format(date);
-
 	}
 
 	public static void appendTextToFile(String filePath, String text) {
@@ -177,14 +167,6 @@ public class Utility {
 
 		String diffInString = String.format("%02d:%02d:%02d", elapsedHours, elapsedMinutes, elapsedSeconds);
 		return diffInString;
-	}
-
-	public static String getCurrentDateMalaysia() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		sdf.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
-
-		String date = sdf.format(new Date());
-		return date;
 	}
 
 	public static String generatRandomString(int stringLen) {
@@ -267,4 +249,25 @@ public class Utility {
 		return files;
 	}
 
+	public static String getCurrentDateTime() {
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date date = new Date();
+		String dateTime = dateFormat.format(date);
+		return dateTime;
+	}
+
+	public static String getCurrentTime() {
+		DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+		Date date = new Date();
+		String dateTime = timeFormat.format(date);
+		return dateTime;
+	}
+
+	public static String getCurrentDate() {
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = new Date();
+		return dateFormat.format(date);
+	}
+	
+	
 }

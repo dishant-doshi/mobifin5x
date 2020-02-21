@@ -54,8 +54,6 @@ public class CustomizedEmailableReport implements IReporter {
 	Map<String, Integer> failedData;
 	Map<String, Integer> skippedData;
 
-	Common commonWeb;
-
 	/** Creates summary of the run */
 	@Override
 	public void generateReport(List<XmlSuite> xmlSuites, List<ISuite> suites, String outdir) {
@@ -94,10 +92,9 @@ public class CustomizedEmailableReport implements IReporter {
 	}
 
 	protected PrintWriter createWriter(String outdir) throws IOException {
-		commonWeb = new Common();
 		return new PrintWriter(
 				new BufferedWriter(new FileWriter(new File(outdir, ReadProperty.getPropertyValue("PROJECT_NAME") + "_"
-						+ commonWeb.getCurrentDateTime().replaceAll(":", ".") + "_Summary_Report.html"))));
+						+ Utility.getCurrentDateTime().replaceAll(":", ".") + "_Summary_Report.html"))));
 	}
 
 	/**

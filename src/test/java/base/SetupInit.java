@@ -51,7 +51,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.ITestContext;
 import org.testng.ITestResult;
@@ -61,84 +60,12 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
-
-import elasticUtils.LogMatrics;
 import pages.LoginPage;
 import utils.ReadProperty;
 import utils.ReadXMLData;
 import utils.Utility;
 
 public class SetupInit extends Constants {
-
-	public static final int DEFAULT_PAUSE_INSECONDS = 2;
-	public String paginationValue = "25";
-	public static boolean booleanValue = false;
-	protected Boolean failure = false;
-	protected String reason = "None";
-	protected String detailedFailureReason = "None";
-	protected String stacktrace = "None";
-	protected float ScriptExecution = 50;
-	private long endTime;
-	long end = Long.MIN_VALUE;
-	long start = Long.MAX_VALUE;
-	long startMS;
-	LogMatrics logMatrics = new LogMatrics(elasticIndex, indexType);
-
-	private static int setupCounter = 0;
-	public boolean maskingAllowed = Boolean.parseBoolean(ReadProperty.getPropertyValue("MaskingAllowed"));
-	public boolean viewReport = Boolean.parseBoolean(ReadProperty.getPropertyValue("ViewReport"));
-	public static String configFileName = ReadProperty.getPropertyValue("ConfigurationFileName");
-	public static String dkycFile = ReadProperty.getPropertyValue("DKYCFileName");
-	public final String REPORT_FOLDER = ReadProperty.getPropertyValue("REPORT_FOLDER") + File.separator;
-	public final String SCREENSHOT_FOLDER = ReadProperty.getPropertyValue("SCREENSHOT_FOLDER");
-	public final String VIDEOS_FOLDER = ReadProperty.getPropertyValue("VIDEOS_FOLDER");
-	public final String TESTDATA_FOLDER = ReadProperty.getPropertyValue("TESTDATA_FOLDER");
-	public final String RESOURCES_FOLDER = TESTDATA_FOLDER + "/" + ReadProperty.getPropertyValue("RESOURCES_FOLDER")
-			+ "/";
-	public final String DOWNLOADS_FOLDER = ReadProperty.getPropertyValue("DOWNLOADS_FOLDER") + "/";
-	public final String currentDir = System.getProperty("user.dir");
-	public final String DEPENDENCIES_FOLDER = (currentDir + "\\" + ReadProperty.getPropertyValue("DEPENDENCIES_FOLDER")
-			+ "\\");
-	public final String APPLICATIONS_FOLDER = (currentDir + "\\" + ReadProperty.getPropertyValue("APPLICATIONS_FOLDER")
-			+ "\\");
-	public final String MOBILE_APP_PACKAGE_NAME = ReadProperty.getPropertyValue("MOBILE_APP_PACKAGE_NAME");
-	private int GENERAL_TIMEOUT = 30;
-	// private int MOBILE_GENERAL_TIMEOUT = 15;
-	private int MAX_WAIT_TIME_IN_SEC = Integer.parseInt(ReadProperty.getPropertyValue("MAX_WAIT_TIME_IN_SEC"));
-	private int POLLING_MAX_TIME_IN_MILLISEC = 400;
-	public Date testStartTime;
-	protected WebDriver driver;
-	Wait<WebDriver> wait;
-	static URL remote_grid;
-	int reloadCounter = 0;
-	public ReadXMLData configFileObj;
-	protected ReadXMLData fwTestData = null;
-
-	/* Minimum requirement for test configuration */
-	protected boolean isRemoteEnable;
-	protected String hubUrl; // Selenium hub IP
-	protected String hubPort; // Selenium hub port
-	protected String appWaitActivity;
-
-	public String testUrl;
-
-	protected String targetBrowser;
-
-	protected static String test_data_folder_path = null;
-	protected static String screenshot_folder_path = null;
-	protected static String resources_folder_path = null;
-	public boolean logDefectAutomated = false;
-	public boolean recordSessionVideo = false;
-	private static boolean incognito;
-	static ReadXMLData readFilePath = null;
-	protected static String proxyIP;
-	protected static String proxyPort;
-	String regexTCID;
-	String regexAuthor;
-	String sessionid = "";
-	String videoURL = "";
-	LoginPage loginPage;
-	// CommonVariables log = new CommonVariables();
 
 	protected enum Condition {
 		isDisplayed, isClickable, isPresent
@@ -157,14 +84,13 @@ public class SetupInit extends Constants {
 	public void initializeSetupInit(@Optional String browserType, @Optional String testUrl, ITestContext testContext) {
 		this.targetBrowser = browserType;
 		this.testUrl = testUrl;
-		test_data_folder_path = new File(TESTDATA_FOLDER).getAbsolutePath() + "\\";
-		screenshot_folder_path = new File(SCREENSHOT_FOLDER).getAbsolutePath() + "\\";
-		resources_folder_path = new File(RESOURCES_FOLDER).getAbsolutePath() + "\\";
+		test_data_folder_path = new File(TESTDATA_FOLDER).getAbsolutePath() + File.separator;
+		screenshot_folder_path = new File(SCREENSHOT_FOLDER).getAbsolutePath() + File.separator;
+		resources_folder_path = new File(RESOURCES_FOLDER).getAbsolutePath() + File.separator;
+		configFilePath = test_data_folder_path + CONFIG_FILE_NAME;
 		File downloadsDirectoryName = new File(DOWNLOADS_FOLDER);
-		if (!downloadsDirectoryName.exists()) {
+		if (!downloadsDirectoryName.exists())
 			downloadsDirectoryName.mkdir();
-		}
-		Utility.removeFolder("allure-report");
 		if (setupCounter == 0) {
 			Utility.removeFolder(ReadProperty.getPropertyValue("REPORT_FOLDER"));
 			setupCounter++;
@@ -180,10 +106,8 @@ public class SetupInit extends Constants {
 		}
 		if (recordSessionVideo == true) {
 			File f = new File(REPORT_FOLDER + VIDEOS_FOLDER);
-			if (!f.exists()) {
+			if (!f.exists())
 				f.mkdirs();
-			}
-
 		}
 		try {
 			setDriver(targetBrowser);
@@ -193,26 +117,10 @@ public class SetupInit extends Constants {
 			System.out.println(e);
 		}
 		this.driver.get(testUrl);
-		String userNameVal = getTestData("Admin", "username");
-		String passwordVal = commonWeb.getTestData("Admin", "password");
-		loginPage = new LoginWeb(this.driver);
+		String userNameVal = Utility.getTestData(configFilePath, "Admin", "username");
+		String passwordVal = Utility.getTestData(configFilePath, "Admin", "password");
+		loginPage = new LoginPage(this.driver);
 		loginPage.login(userNameVal, passwordVal);
-	}
-
-	public void pauseInSeconds(int i) {
-		try {
-			Thread.sleep(1000 * i);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void defaultPause() {
-		try {
-			Thread.sleep(1000 * DEFAULT_PAUSE_INSECONDS);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 	}
 
 	private void setDriver(String browserType) {
@@ -266,10 +174,17 @@ public class SetupInit extends Constants {
 
 	private WebDriver initChromeDriver() {
 		System.out.println("Launching google chrome with new profile..");
+		System.setProperty("webdriver.chrome.driver", DEPENDENCIES_FOLDER + "chromedriver.exe");
+		ChromeOptions option = setChromeOptions();
+		if (isRemoteEnable)
+			return new RemoteWebDriver(remote_grid, option);
+		return new ChromeDriver(option);
+	}
+
+	private ChromeOptions setChromeOptions() {
 		HashMap<String, Object> chromePrefs = new HashMap<String, Object>();
 		chromePrefs.put("profile.default_content_settings.popups", Integer.valueOf(0));
 		chromePrefs.put("download.default_directory", DOWNLOADS_FOLDER);
-		System.setProperty("webdriver.chrome.driver", DEPENDENCIES_FOLDER + "chromedriver.exe");
 		ChromeOptions options = new ChromeOptions();
 		options.addArguments("--start-maximized");
 		if (incognito)
@@ -278,32 +193,43 @@ public class SetupInit extends Constants {
 		options.addArguments("--disable-extenstions");
 		options.addArguments(new String[] { "disable-infobars" });
 		options.setExperimentalOption("prefs", chromePrefs);
+		DesiredCapabilities capabilities = setChromeCapabilities();
+		options.merge(capabilities);
+		if (isRemoteEnable)
+			capabilities.setCapability("goog:chromeOptions", options);
+		return options;
+	}
+
+	private DesiredCapabilities setChromeCapabilities() {
 		DesiredCapabilities capabilities = DesiredCapabilities.chrome();
 		capabilities.setCapability("acceptSslCerts", true);
-		// capabilities.setCapability("goog:chromeOptions", options);
-		// capabilities.setCapability("screen-resolution", "1280x1024");
-		options.merge(capabilities);
-		if (isRemoteEnable) {
-			capabilities.setCapability("goog:chromeOptions", options);
-			driver = new RemoteWebDriver(remote_grid, capabilities);
-			return driver;
-		}
-		driver = new ChromeDriver(options);
-		return driver;
+		return capabilities;
 	}
 
 	private WebDriver initFirefoxDriver() {
 		System.out.println("Launching Firefox browser..");
 		System.setProperty("webdriver.gecko.driver", DEPENDENCIES_FOLDER + "geckodriver.exe");
-		// DesiredCapabilities dc = DesiredCapabilities.firefox();
+		FirefoxOptions options = setFireFoxOptions();
+		if (isRemoteEnable)
+			return new RemoteWebDriver(remote_grid, options);
+		return new FirefoxDriver(options);
+	}
+
+	private FirefoxOptions setFireFoxOptions() {
 		FirefoxOptions options = new FirefoxOptions();
 		options.setCapability("gecko", true);
-		if (isRemoteEnable) {
-			driver = new RemoteWebDriver(remote_grid, options);
-			return driver;
-		}
-		driver = new FirefoxDriver(options);
-		return driver;
+		options.addArguments("--disable-notifications");
+		options.addArguments("--disable-extenstions");
+		options.addArguments(new String[] { "disable-infobars" });
+		DesiredCapabilities capabilities = setFireFoxCapabilities();
+		options.merge(capabilities);
+		return options;
+	}
+
+	private DesiredCapabilities setFireFoxCapabilities() {
+		DesiredCapabilities capabilities = DesiredCapabilities.firefox();
+		capabilities.setCapability("acceptSslCerts", true);
+		return capabilities;
 	}
 
 	private WebDriver initIEDriver() {
@@ -311,22 +237,18 @@ public class SetupInit extends Constants {
 		InternetExplorerOptions options = new InternetExplorerOptions();
 		capabilities.setPlatform(Platform.ANY);
 		capabilities.setBrowserName("internet explorer");
-		// capabilities.setVersion("8.0");
 		capabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
 		capabilities.setCapability(CapabilityType.ForSeleniumServer.ENSURING_CLEAN_SESSION, true);
 		capabilities.setJavascriptEnabled(true);
-		if (isRemoteEnable) {
-			driver = new RemoteWebDriver(remote_grid, capabilities);
-			return driver;
-		}
-
+		if (isRemoteEnable)
+			return new RemoteWebDriver(remote_grid, capabilities);
 		options.merge(capabilities);
 		driver = new InternetExplorerDriver(options);
 		return driver;
 	}
 
 	private WebDriver initChromeProxyDriver() {
-		configFileObj = new ReadXMLData(test_data_folder_path + configFileName);
+		configFileObj = new ReadXMLData(test_data_folder_path + CONFIG_FILE_NAME);
 		proxyIP = configFileObj.get("Proxy", "ProxyIP");
 		proxyPort = configFileObj.get("Proxy", "ProxyPort");
 		System.setProperty("webdriver.chrome.driver", DEPENDENCIES_FOLDER + "chromedriver.exe");
@@ -361,7 +283,7 @@ public class SetupInit extends Constants {
 
 	private WebDriver initFirefoxProxyDriver() {
 		FirefoxProfile profile1 = new FirefoxProfile();
-		configFileObj = new ReadXMLData(test_data_folder_path + configFileName);
+		configFileObj = new ReadXMLData(test_data_folder_path + CONFIG_FILE_NAME);
 		proxyIP = configFileObj.get("Proxy", "ProxyIP");
 		proxyPort = configFileObj.get("Proxy", "ProxyPort");
 		System.setProperty("webdriver.gecko.driver", DEPENDENCIES_FOLDER + "geckodriver.exe");
@@ -440,6 +362,22 @@ public class SetupInit extends Constants {
 			if (!isVisibleInViewport(foo))
 				scrollToElement(foo);
 		return foo;
+	}
+
+	public void pauseInSeconds(int i) {
+		try {
+			Thread.sleep(1000 * i);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void defaultPause() {
+		try {
+			Thread.sleep(1000 * DEFAULT_PAUSE_INSECONDS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	protected void scrollToElement(WebElement element) {
@@ -550,11 +488,9 @@ public class SetupInit extends Constants {
 			FileUtils.copyFile(screenshot, f);
 		} catch (IOException e) {
 			e.printStackTrace();
-			commonWeb = new Common();
-			commonWeb.log("Failed to capture screenshot:" + e.getMessage());
+			log("Failed to capture screenshot:" + e.getMessage());
 		}
-		commonWeb = new Common();
-		commonWeb.log(createScreenshotLink(screenShotName, screenShotLoaction.toString()));
+		log(createScreenshotLink(screenShotName, screenShotLoaction.toString()));
 	}
 
 	public String makeScreenshot(String testClassName, String testMethod) {
@@ -588,7 +524,7 @@ public class SetupInit extends Constants {
 	}
 
 	/**
-	 * @author vivek.mishra
+	 * @author dishant.doshi
 	 * @return the current URL
 	 * @created on 25/02/2019
 	 */
@@ -603,6 +539,99 @@ public class SetupInit extends Constants {
 	public void reloadCurrentPage() {
 		String url = getCurrentURL();
 		driver.get(url);
+	}
+
+	public String getIPOfNode() {
+		boolean isRemote = Boolean.parseBoolean(Utility.getTestData(configFilePath, "Master", "isRemoteEnable"));
+		if (isRemote) {
+			defaultPause();
+			String hostFound = null;
+			try {
+				HttpCommandExecutor ce = (HttpCommandExecutor) ((RemoteWebDriver) this.driver).getCommandExecutor();
+				String hostName = ce.getAddressOfRemoteServer().getHost();
+				int port = ce.getAddressOfRemoteServer().getPort();
+				HttpHost host = new HttpHost(hostName, port);
+				HttpClient client = new DefaultHttpClient();
+				URL sessionURL = new URL("http://" + hostName + ":" + port + "/grid/api/testsession?session="
+						+ ((RemoteWebDriver) this.driver).getSessionId());
+				BasicHttpEntityEnclosingRequest r = new BasicHttpEntityEnclosingRequest("POST",
+						sessionURL.toExternalForm());
+				HttpResponse response = client.execute(host, r);
+				JSONObject object = extractObject(response);
+				URL myURL = new URL(object.getString("proxyId"));
+				if ((myURL.getHost() != null) && (myURL.getPort() != -1)) {
+					hostFound = myURL.getHost();
+				}
+			} catch (Exception e) {
+				System.err.println(e);
+			}
+			return hostFound;
+		} else {
+			String inetAddress = null;
+			try {
+				inetAddress = InetAddress.getLocalHost().toString();
+			} catch (UnknownHostException e) {
+			}
+			return inetAddress;
+		}
+	}
+
+	public JSONObject extractObject(HttpResponse resp) throws IOException, JSONException {
+		InputStream contents = resp.getEntity().getContent();
+		StringWriter writer = new StringWriter();
+		IOUtils.copy(contents, writer, "UTF8");
+		JSONObject objToReturn = new JSONObject(writer.toString());
+		return objToReturn;
+	}
+
+	/**
+	 * @author dishant.doshi
+	 * @return current time in integer
+	 * @created on 25/02/2019
+	 */
+	public Instant getCurrentTime() {
+		return Instant.now();
+	}
+
+	public synchronized void log(String message) {
+		Reporter.log(message);
+	}
+
+	public void fetchSuiteConfiguration(String configuration) {
+		configFileObj = new ReadXMLData(test_data_folder_path + CONFIG_FILE_NAME);
+		isRemoteEnable = Boolean.parseBoolean(configFileObj.get(configuration, "isRemoteEnable"));
+		incognito = Boolean.parseBoolean(configFileObj.get(configuration, "incognito"));
+		if (isRemoteEnable) {
+			hubUrl = configFileObj.get(configuration, "Hub");
+			hubPort = configFileObj.get(configuration, "Port");
+		}
+		logDefectAutomated = new Boolean(configFileObj.get(configuration, "AutoLogDefectInJira"));
+		recordSessionVideo = new Boolean(configFileObj.get(configuration, "RecordVideoOfTestExecution"));
+		regexTCID = configFileObj.get("Configuration", "TestIdRegex");
+		regexAuthor = configFileObj.get("Configuration", "TestAuthorRegex");
+	}
+
+	@AfterMethod(alwaysRun = true)
+	public void tearDown(ITestResult testResult) {
+		if (!testResult.isSuccess()) {
+			System.out.println(testResult);
+			Reporter.setCurrentTestResult(testResult);
+			String[] testClass = testResult.getTestClass().toString().split("\\.");
+			String testClassName = testClass[testClass.length - 1].replace("]", "\\");
+			String testMethod = testResult.getName().toString();
+			File screenshotLocation = new File(REPORT_FOLDER + SCREENSHOT_FOLDER + File.separator + testClassName
+					+ testMethod + File.separator + Utility.getCurrentDate().replaceAll("/", "-"));
+			if (!screenshotLocation.getAbsoluteFile().exists())
+				screenshotLocation.mkdir();
+			String screenshotName = Utility.getCurrentTime().replace(":", ";") + ".png";
+			Reporter.log("<br> <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Please click for screenshot - </b>");
+			makeScreenshot(screenshotName, screenshotLocation);
+		}
+	}
+
+	@AfterClass
+	public void closeBrowser() {
+		this.driver.quit();
 	}
 
 	// ################ Supporting methods
@@ -643,55 +672,6 @@ public class SetupInit extends Constants {
 		return dataToDump;
 	}
 
-	public String getIPOfNode() {
-		// boolean isRemote = Boolean.parseBoolean(ReadProperty.getPropertyValue(""));
-		boolean isRemote = Boolean.parseBoolean(Utility.getTestData(configFilePath, "Master", "isRemoteEnable"));
-		if (isRemote) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			String hostFound = null;
-			try {
-				HttpCommandExecutor ce = (HttpCommandExecutor) ((RemoteWebDriver) this.driver).getCommandExecutor();
-				String hostName = ce.getAddressOfRemoteServer().getHost();
-				int port = ce.getAddressOfRemoteServer().getPort();
-				HttpHost host = new HttpHost(hostName, port);
-				HttpClient client = new DefaultHttpClient();
-				URL sessionURL = new URL("http://" + hostName + ":" + port + "/grid/api/testsession?session="
-						+ ((RemoteWebDriver) this.driver).getSessionId());
-				BasicHttpEntityEnclosingRequest r = new BasicHttpEntityEnclosingRequest("POST",
-						sessionURL.toExternalForm());
-				HttpResponse response = client.execute(host, r);
-				JSONObject object = extractObject(response);
-				URL myURL = new URL(object.getString("proxyId"));
-				if ((myURL.getHost() != null) && (myURL.getPort() != -1)) {
-					hostFound = myURL.getHost();
-				}
-			} catch (Exception e) {
-				System.err.println(e);
-			}
-			return hostFound;
-		} else {
-			String inetAddress = null;
-			try {
-				inetAddress = InetAddress.getLocalHost().toString();
-			} catch (UnknownHostException e) {
-			}
-			return inetAddress;
-		}
-	}
-
-	public JSONObject extractObject(HttpResponse resp) throws IOException, JSONException {
-		InputStream contents = resp.getEntity().getContent();
-		StringWriter writer = new StringWriter();
-		IOUtils.copy(contents, writer, "UTF8");
-		JSONObject objToReturn = new JSONObject(writer.toString());
-		return objToReturn;
-	}
-
 	public String getCurrentMethodName() {
 		return new Throwable().getStackTrace()[0].getMethodName();
 	}
@@ -700,60 +680,4 @@ public class SetupInit extends Constants {
 		return "<br><Strong><font color=#FF0000>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Failed screenshot name = </font></strong><a target='_blank' href='../"
 				+ link_text + File.separator + screenShotName + "'>" + screenShotName + "</a>";
 	}
-
-	/**
-	 * @author vivek.mishra
-	 * @return current time in integer
-	 * @created on 25/02/2019
-	 */
-	public Instant getCurrentTime() {
-		return Instant.now();
-	}
-
-	public void fetchSuiteConfiguration(String configuration) {
-		configFileObj = new ReadXMLData(test_data_folder_path + configFileName);
-		isRemoteEnable = Boolean.parseBoolean(configFileObj.get(configuration, "isRemoteEnable"));
-		incognito = Boolean.parseBoolean(configFileObj.get(configuration, "incognito"));
-		if (isRemoteEnable) {
-			hubUrl = configFileObj.get(configuration, "Hub");
-			hubPort = configFileObj.get(configuration, "Port");
-		}
-		logDefectAutomated = new Boolean(configFileObj.get(configuration, "AutoLogDefectInJira"));
-		recordSessionVideo = new Boolean(configFileObj.get(configuration, "RecordVideoOfTestExecution"));
-		regexTCID = configFileObj.get("Configuration", "TestIdRegex");
-		regexAuthor = configFileObj.get("Configuration", "TestAuthorRegex");
-	}
-
-	@AfterMethod(alwaysRun = true)
-	public void tearDown(ITestResult testResult) {
-		// logList.clear();
-		if (!testResult.isSuccess()) {
-			System.out.println(testResult);
-			Reporter.setCurrentTestResult(testResult);
-			String[] testClass = testResult.getTestClass().toString().split("\\.");
-			String testClassName = testClass[testClass.length - 1].replace("]", "\\");
-			String testMethod = testResult.getName().toString();
-
-			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-			DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-			Date date = new Date();
-			String currentDate = dateFormat.format(date);
-			String currentTime = timeFormat.format(date);
-
-			File screenshotLocation = new File(REPORT_FOLDER + SCREENSHOT_FOLDER + File.separator + testClassName
-					+ testMethod + File.separator + currentDate.replaceAll("/", "-"));
-			if (!screenshotLocation.getAbsoluteFile().exists())
-				screenshotLocation.mkdir();
-
-			String screenshotName = currentTime.replace(":", ";") + ".png";
-			Reporter.log("<br> <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Please click for screenshot - </b>");
-			makeScreenshot(screenshotName, screenshotLocation);
-		}
-	}
-
-	@AfterClass
-	public void closeBrowser() {
-		this.driver.quit();
-	}
-
 }
