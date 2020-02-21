@@ -12,8 +12,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -141,7 +143,7 @@ public class SetupInit extends Constants {
 	// CommonVariables log = new CommonVariables();
 
 	protected enum Condition {
-		isDisplayed, isClickable, isPresent
+		isDisplayed, isClickable, isPresent, isNotVisible
 	}
 
 	protected enum Speed {
@@ -391,13 +393,93 @@ public class SetupInit extends Constants {
 		driver = new FirefoxDriver(options1);
 		return driver;
 	}
+	
+	
+	
+	public String getText(By locator, int... timeOrAssert) {
+		return findVisibleElement(locator, timeOrAssert).getText();
+	}
+	
+	public void clickOnElement(By locator, int... timeOrAssert) {
+		findVisibleElement(locator, timeOrAssert).click();
+	}
+	
+	public void sendKeys(By locator,String text, int... timeOrAssert) {
+		findVisibleElement(locator, timeOrAssert).sendKeys(text);
+	}
+	
+	public boolean verifyVisible(By locator, int... timeOrAssert) {
+		return findVisibleElement(locator, timeOrAssert).isDisplayed();
+	}
+	
+	public boolean veifyElementIsNotVisible(By locator, int... time) {
+		return waitForInvisble(Condition.isNotVisible, locator, getTimeOut(time));
+	}
+	
+	
+	
+	public List<String> getTextFromElementList(By locator, int... timeOrAssert) {
+		List<String> textList = new ArrayList<>();
+		for(WebElement element: getElementList(locator, timeOrAssert)) {
+			textList.add(element.getText());
+		}
+		return textList;
+	}
+	
+	public List<WebElement> getElementList(By locator, int... timeOrAssert) {
+		waitForElementState(locator, Condition.isDisplayed, getTimeOut(timeOrAssert));
+		
+		String message = "";
+		ArrayList<WebElement> elementLst = new ArrayList<>();
+		try {
+			elementLst = (ArrayList<WebElement>) driver.findElements(locator);
+			message = "getElementList passed, locator  by : " + locator;
+		} catch (Exception e) {
+			message = "getElementList failed: " + getPortableString(e.toString()) + ", locator by : " + locator;
+		}
+		return elementLst;
+	}
 
-	public WebElement findVisibleElement(By locator, int... time) {
-		return waitAndFindElement(locator, Condition.isDisplayed, getTimeOut(time));
+	public WebElement findVisibleElement(By locator, int... timeOrAssert) {
+		String message = "";
+		WebElement element = null;
+		Map<WebElement, String> elementState = new HashMap<>();
+		elementState = waitForElementState(locator, Condition.isDisplayed, getTimeOut(timeOrAssert));
+		for (Map.Entry<WebElement, String> entry : elementState.entrySet()) {
+			element = entry.getKey();
+			message = entry.getValue();
+		}
+		try {
+			if (element == null) {
+				throw new Exception();
+			}
+		} catch (Exception e) {
+			String ExceptionMessage = "Element is not displayed failed: " + getPortableString(message) + ": " + " by : "
+					+ locator;
+			exceptionOnFailure(false, ExceptionMessage, timeOrAssert);
+		}
+		return element;
 	}
 
 	public WebElement findPresentElement(By locator, int... time) {
-		return waitAndFindElement(locator, Condition.isPresent, getTimeOut(time));
+		String message = "";
+		WebElement element = null;
+		Map<WebElement, String> elementState = new HashMap<>();
+		elementState = waitForElementState(locator, Condition.isPresent, getTimeOut(time));
+		for (Map.Entry<WebElement, String> entry : elementState.entrySet()) {
+			element = entry.getKey();
+			message = entry.getValue();
+		}
+		try {
+			if (element == null) {
+				throw new Exception();
+			}
+		} catch (Exception e) {
+			String ExceptionMessage = "Element is not Presen failed: " + getPortableString(message) + ": " + " by : "
+					+ locator;
+			exceptionOnFailure(false, ExceptionMessage, time);
+		}
+		return element;
 	}
 
 	private int getTimeOut(int[] time) {
@@ -408,38 +490,72 @@ public class SetupInit extends Constants {
 		return timeOut;
 	}
 
-	private WebElement waitAndFindElement(By locator, Condition condition, int time) {
-		WebElement foo = null;
-		do {
-		} while (!waitForLoader());
-		do {
-		} while (!isAjaxCallCompleted());
+	private Map<WebElement,String> waitForElementState(By locator, Condition condition, int time) {
+		WebElement element;
+		Map<WebElement, String> map = new HashMap<>();
+		element = getElement(condition,locator,time);
+		String message = "";
+		if (element == null) {
+			try {
+				throw new Exception();
+			} catch (Exception e) {
+				message = "State = " + condition.toString() + " failed: ";
+			}
+		} else {
+			message = "State = " + condition.toString() + " Passed: ";
 
-		this.wait = new WebDriverWait(driver, time);
-		switch (condition) {
-		case isClickable:
-			try {
-				foo = (WebElement) this.wait.until(ExpectedConditions.elementToBeClickable(locator));
-			} catch (Exception e) {
-			}
-			break;
-		case isDisplayed:
-			try {
-				foo = (WebElement) this.wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-			} catch (Exception e) {
-			}
-			break;
-		case isPresent:
-			try {
-				foo = (WebElement) this.wait.until(ExpectedConditions.presenceOfElementLocated(locator));
-			} catch (Exception e) {
-			}
-			break;
 		}
-		if (foo != null)
-			if (!isVisibleInViewport(foo))
-				scrollToElement(foo);
-		return foo;
+		map.put(element, message);
+		return map; 
+		
+	}
+	
+	private boolean waitForInvisble(Condition condition, By by, int time) {
+		WebDriverWait wait = new WebDriverWait(driver, time);
+		try {
+			switch (condition) {
+			case isNotVisible:
+				return wait.until(ExpectedConditions.invisibilityOfElementLocated(by));
+			default:
+				break;
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		return false;
+	}
+	
+	private WebElement getElement(Condition condition, By by, int time) {
+		WebElement element = null;
+		WebDriverWait wait = new WebDriverWait(driver, time);
+		try {
+			switch (condition) {
+			case isClickable:
+				element = (WebElement) wait.until(ExpectedConditions.visibilityOfElementLocated(by));
+				if (element == null) {
+					return element;
+				} else if (element.getAttribute("clickable") == null) {
+					return element;
+				} else if (element.getAttribute("clickable") != null) {
+					element = (WebElement) wait.until(ExpectedConditions.elementToBeClickable(by));
+					return element;
+				}
+				break;
+			case isDisplayed:
+				element = (WebElement) wait.until(ExpectedConditions.visibilityOfElementLocated(by));
+				break;
+			case isPresent:
+				element = (WebElement) wait.until(ExpectedConditions.presenceOfElementLocated(by));
+				break;
+			default:
+				break;
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		return element;
 	}
 
 	protected void scrollToElement(WebElement element) {
@@ -604,9 +720,13 @@ public class SetupInit extends Constants {
 		String url = getCurrentURL();
 		driver.get(url);
 	}
+	
+	@AfterClass
+	public void closeBrowser() {
+		this.driver.quit();
+	}
 
-	// ################ Supporting methods
-	// ####################################################################################################
+	// ################ Supporting methods #################################################################
 
 	protected void logException(Throwable e, Map<Object, Object> map) {
 		// map.put("Steps To Reproduce", logList);
@@ -750,10 +870,64 @@ public class SetupInit extends Constants {
 			makeScreenshot(screenshotName, screenshotLocation);
 		}
 	}
+	
+	public void exceptionOnFailure(boolean success, String message, int[] assertion) {
+		if (!success) {
+			if (assertionResult(assertion)) {
+				try {
+					assertStatus(success);
+				} catch (Exception e) {
+					RuntimeException ex = new RuntimeException(message + " : " + e.getMessage());
+					System.out.println("Exception Logging For: " + message);
+					ex.setStackTrace(e.getStackTrace());
+					throw ex;
+				}
+			}
+		}
+	}
+	
+	public boolean assertionResult(int[] j) {
+		if(j !=null) {
+			if(j.length>0) {
+				if(j[0] != 0) {
+					return false;
+				}
+				else {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public boolean isVarArgsPassed(int[] j) {
+		if(j !=null) {
+			if(j.length>0) {
+				if(j[0] > 0) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+		}
+		return false;
+	}
 
-	@AfterClass
-	public void closeBrowser() {
-		this.driver.quit();
+	public void assertStatus(boolean success) throws Exception {
+		if (!success) {
+			throw new Exception("");
+		}
+	}
+	
+	public String getPortableString(String str) {
+		if (str.length() > 150) {
+			return str.substring(0, 150) + "...";
+		}else if(str.length() != 0) {
+			return str.substring(0, str.length() - 1) + "...";
+		}else {
+			return str;
+		}
 	}
 
 }
