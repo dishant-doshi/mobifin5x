@@ -19,8 +19,9 @@ public class PlatformConfigurationParameter extends SetupInit {
 
 	@BeforeClass
 	public void beforeClass() {
-		homePage = new HomePage();
-		navigationPage = new NavigationPage();
+		homePage = new HomePage(getDriver());
+		navigationPage = new NavigationPage(getDriver());
+		platformConfigurationParameterPage = new PlatformConfigurationParameterPage(getDriver());
 	}
 
 	@Test(dataProvider = "Parameter_Add", dataProviderClass = TestDataImport.class, description = "Id: AddParameter, Author: shivani.patel")

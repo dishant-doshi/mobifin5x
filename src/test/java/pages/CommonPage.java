@@ -15,6 +15,10 @@ public class CommonPage extends SetupInit implements Common {
 	public void clickOnClearBtn() {
 		clickOnElement(btnClear);
 	}
+	
+	public void clickOnFilterSearchBtn() {
+		clickOnElement(btnFilterSearch);
+	}
 
 	public void commonFilterSearch() {
 		clickOnFilterBtn();

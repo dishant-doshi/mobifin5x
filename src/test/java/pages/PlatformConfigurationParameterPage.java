@@ -4,13 +4,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.openqa.selenium.By;
-
-import com.panamax.init.CommonVariables;
+import org.openqa.selenium.WebDriver;
 
 import locators.PlatformConfigurationParameter;
 
 public class PlatformConfigurationParameterPage extends CommonPage implements PlatformConfigurationParameter {
-	public void filterSearch(String name, String str2, String usedBy, boolean isSubString) {
+	public PlatformConfigurationParameterPage(WebDriver driver) {
+		this.driver = driver;
+	}
+
+	public void filterSearch(String name, String status, String usedBy, boolean isSubString) {
 		commonFilterSearch();
 		if (isSubString) {
 			clickOnElement(filterDownArrow);
@@ -18,7 +21,7 @@ public class PlatformConfigurationParameterPage extends CommonPage implements Pl
 		}
 		sendKeys(txtNameInSearch, name);
 		selectFromDropDown(drpUsedBy, By.xpath(String.format(dropDownValue, usedBy)));
-		selectStatusInFilterSearch(str2);
+		selectFromDropDown(drpStatusInSearch, By.xpath(String.format(dropDownValue, status)));
 		clickOnFilterSearchBtn();
 	}
 

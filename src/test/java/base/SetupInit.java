@@ -69,7 +69,7 @@ import utils.ReadProperty;
 import utils.ReadXMLData;
 import utils.Utility;
 
-public class SetupInit extends Constants {
+public class SetupInit extends CommonConstants {
 	public WebDriver getDriver() {
 		return this.driver;
 	}

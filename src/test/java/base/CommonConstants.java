@@ -12,7 +12,7 @@ import pages.LoginPage;
 import utils.ReadProperty;
 import utils.ReadXMLData;
 
-public class Constants {
+public class CommonConstants {
 	static String currentDir = System.getProperty("user.dir");
 	final String elasticIndex = "";
 	final String indexType = "";
@@ -74,7 +74,7 @@ public class Constants {
 	LoginPage loginPage;
 	LogMatrics logMatrics = new LogMatrics(elasticIndex, indexType);
 	public static final String ELEMENT_FILE = currentDir + File.separator + "constants.js";
-	public static final String LABEl_FILE = currentDir + File.separator + "en-US.js";
+	public static final String LABLE_FILE = currentDir + File.separator + "en-US.js";
 
 	protected enum Condition {
 		isDisplayed, isClickable, isPresent, isNotVisible
