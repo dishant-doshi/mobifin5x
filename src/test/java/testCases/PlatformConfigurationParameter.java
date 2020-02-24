@@ -10,12 +10,12 @@ import base.TestDataImport;
 import pages.HomePage;
 import pages.NavigationPage;
 import pages.PlatformConfigurationParameterPage;
+import utils.Utility;
 
 public class PlatformConfigurationParameter extends SetupInit {
 	HomePage homePage;
 	NavigationPage navigationPage;
 	PlatformConfigurationParameterPage platformConfigurationParameterPage;
-	private long startTime;
 
 	@BeforeClass
 	public void beforeClass() {
@@ -25,24 +25,18 @@ public class PlatformConfigurationParameter extends SetupInit {
 
 	@Test(dataProvider = "Parameter_Add", dataProviderClass = TestDataImport.class, description = "Id: AddParameter, Author: shivani.patel")
 	public void addParameter(Map<Object, Object> map) {
-		startTime = System.currentTimeMillis();
 		try {
-			map.put("Test Start Time", startTime);
-			map.put("Class Name", this.getClass().getName());
-			map.put("Method Name", "addParameter");
+			setTestParameters(map, "addParameter");
 			homePage.goToHome();
 			navigationPage.clickOnPlateformConfigurationParameter();
-			platformConfigurationParameterPage.addParameter(map);
-			platformConfigurationParameterPage.verifyAddedParameter(map);
-			map.put("value", 100);
-			// map.put("Performed Steps", log.list);
+			platformConfigurationParameterPage.addParameter(map, Utility.getMapKeys(map));
+			platformConfigurationParameterPage.verifyAddedParameter(map, Utility.getMapKeys(map));
+			setSuccessParameters(map);
 		} catch (Exception e) {
-			map.put("value", 0);
-			// map.put("Performed Steps", log.list);
+			setFailureParameters(map);
 			logException(e, map);
 		} finally {
 			logData(map);
-			// log.list.clear();
 		}
 	}
 }

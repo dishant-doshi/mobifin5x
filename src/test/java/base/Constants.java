@@ -73,6 +73,9 @@ public class Constants {
 	String regexAuthor;
 	LoginPage loginPage;
 	LogMatrics logMatrics = new LogMatrics(elasticIndex, indexType);
+	public static final String ELEMENT_FILE = currentDir + File.separator + "constants.js";
+	public static final String LABEl_FILE = currentDir + File.separator + "en-US.js";
+
 	protected enum Condition {
 		isDisplayed, isClickable, isPresent, isNotVisible
 	}

@@ -321,6 +321,11 @@ public class SetupInit extends Constants {
 		findVisibleElement(locator, timeOrAssert).sendKeys(text);
 	}
 
+	public void selectFromDropDown(By dropDownLoc, By valueLoc) {
+		clickOnElement(dropDownLoc);
+		clickOnElement(valueLoc);
+	}
+
 	public boolean verifyVisible(By locator, int... timeOrAssert) {
 		return findVisibleElement(locator, timeOrAssert).isDisplayed();
 	}
@@ -699,11 +704,9 @@ public class SetupInit extends Constants {
 	}
 
 	public void logData(Map<Object, Object> map) {
-		// map.put("Steps To Reproduce", logList);
 		Map<String, Object> dataMap = getDataMap(map);
-		if (dataMap.get("value") == null) {
-			dataMap.put("value", 50);
-
+		if (dataMap.get("Value") == null) {
+			dataMap.put("Value", 50);
 			endTime = System.currentTimeMillis();
 			if (endTime > end)
 				end = endTime / 1000;
@@ -715,9 +718,7 @@ public class SetupInit extends Constants {
 			dataMap.put("Test End Time", Utility.formatTime(endTime));
 			dataMap.put("Total Execution Time", Utility.millisToTimeConversion(end - start));
 			logMatrics.logToElasticsearch(dataMap);
-
-		} else if ((Integer) map.get("value") == 100) {
-
+		} else if ((Integer) map.get("Value") == 100) {
 			endTime = System.currentTimeMillis();
 			if (endTime > end)
 				end = endTime / 1000;
@@ -728,9 +729,8 @@ public class SetupInit extends Constants {
 			dataMap.put("Test Start Time", Utility.formatTime(startMS));
 			dataMap.put("Test End Time", Utility.formatTime(endTime));
 			dataMap.put("Total Execution Time", Utility.millisToTimeConversion(end - start));
-
 			logMatrics.logToElasticsearch(dataMap);
-		} else if ((Integer) dataMap.get("value") == 0) {
+		} else if ((Integer) dataMap.get("Value") == 0) {
 			try {
 				// logStatus(false);
 				Assert.assertTrue(false);
@@ -750,15 +750,8 @@ public class SetupInit extends Constants {
 	}
 
 	public String getIPOfNode() {
-		// boolean isRemote = Boolean.parseBoolean(ReadProperty.getPropertyValue(""));
-		boolean isRemote = Boolean.parseBoolean(Utility.getTestData(configFilePath, "Master", "isRemoteEnable"));
-		if (isRemote) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+		if (isRemoteEnable) {
+			pauseInSeconds(1);
 			String hostFound = null;
 			try {
 				HttpCommandExecutor ce = (HttpCommandExecutor) ((RemoteWebDriver) this.driver).getCommandExecutor();
@@ -911,5 +904,19 @@ public class SetupInit extends Constants {
 		} else {
 			return str;
 		}
+	}
+
+	public void setTestParameters(Map<Object, Object> map, String methodName) {
+		map.put("Test Start Time", System.currentTimeMillis());
+		map.put("Class Name", this.getClass().getName());
+		map.put("Method Name", methodName);
+	}
+
+	public void setSuccessParameters(Map<Object, Object> map) {
+		map.put("Value", 100);
+	}
+
+	public void setFailureParameters(Map<Object, Object> map) {
+		map.put("Value", 0);
 	}
 }

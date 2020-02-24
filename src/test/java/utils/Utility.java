@@ -19,8 +19,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
+import java.util.Scanner;
+import java.util.Set;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
@@ -268,6 +271,26 @@ public class Utility {
 		Date date = new Date();
 		return dateFormat.format(date);
 	}
-	
-	
+
+	public static String readJSFile(String search, String fileName) {
+		String[] searchString = null;
+		String result = "";
+		Path path = Paths.get(fileName);
+		try (Scanner scanner = new Scanner(path)) {
+			while (scanner.hasNextLine()) {
+				searchString = scanner.nextLine().split(":");
+				if (searchString[0].trim().equalsIgnoreCase(search.trim()))
+					result = searchString[1].trim();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return result.substring(0, result.length() - 1).replaceAll("'", "");
+	}
+
+	public static List<Object> getMapKeys(Map<Object, Object> map) {
+		Set<Object> keySet = map.keySet();
+		List<Object> keys = new ArrayList<Object>(keySet);
+		return keys;
+	}
 }
