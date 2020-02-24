@@ -295,28 +295,14 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.0.0-M2</version>
 
-				<configuration>
-					<testFailureIgnore>true</testFailureIgnore>
-					<argLine>
-						-javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
-					</argLine>
-					<forkCount>1</forkCount>
-					<useUnlimitedThreads>true</useUnlimitedThreads>
-					<reuseForks>true</reuseForks>
-					<reportsDirectory>./test-output/</reportsDirectory>
-					<suiteXmlFiles>
-						<suiteXmlFile>./suites/JenkinsSuite.xml</suiteXmlFile>
-					</suiteXmlFiles>
-				</configuration>
-
-				<dependencies>
-					<dependency>
-						<groupId>org.aspectj</groupId>
-						<artifactId>aspectjweaver</artifactId>
-						<version>${aspectj.version}</version>
-					</dependency>
-				</dependencies>
-
+				<!-- <configuration> <testFailureIgnore>true</testFailureIgnore> <argLine> 
+					-javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar" 
+					</argLine> <forkCount>1</forkCount> <useUnlimitedThreads>true</useUnlimitedThreads> 
+					<reuseForks>true</reuseForks> <reportsDirectory>./test-output/</reportsDirectory> 
+					<suiteXmlFiles> <suiteXmlFile>./suites/JenkinsSuite.xml</suiteXmlFile> </suiteXmlFiles> 
+					</configuration> <dependencies> <dependency> <groupId>org.aspectj</groupId> 
+					<artifactId>aspectjweaver</artifactId> <version>${aspectj.version}</version> 
+					</dependency> </dependencies> -->
 				<executions>
 					<execution>
 						<id>default-test</id>

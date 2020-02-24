@@ -54,6 +54,7 @@ import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.ITestResult;
 import org.testng.Reporter;
@@ -62,21 +63,13 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
+
 import pages.LoginPage;
 import utils.ReadProperty;
 import utils.ReadXMLData;
 import utils.Utility;
 
 public class SetupInit extends Constants {
-
-	protected enum Condition {
-		isDisplayed, isClickable, isPresent, isNotVisible
-	}
-
-	protected enum Speed {
-		slow
-	}
-
 	public WebDriver getDriver() {
 		return this.driver;
 	}
@@ -338,15 +331,13 @@ public class SetupInit extends Constants {
 
 	public List<String> getTextFromElementList(By locator, int... timeOrAssert) {
 		List<String> textList = new ArrayList<>();
-		for (WebElement element : getElementList(locator, timeOrAssert)) {
+		for (WebElement element : getElementList(locator, timeOrAssert))
 			textList.add(element.getText());
-		}
 		return textList;
 	}
 
 	public List<WebElement> getElementList(By locator, int... timeOrAssert) {
 		waitForElementState(locator, Condition.isDisplayed, getTimeOut(timeOrAssert));
-
 		String message = "";
 		ArrayList<WebElement> elementLst = new ArrayList<>();
 		try {
@@ -368,9 +359,8 @@ public class SetupInit extends Constants {
 			message = entry.getValue();
 		}
 		try {
-			if (element == null) {
+			if (element == null)
 				throw new Exception();
-			}
 		} catch (Exception e) {
 			String ExceptionMessage = "Element is not displayed failed: " + getPortableString(message) + ": " + " by : "
 					+ locator;
@@ -389,11 +379,30 @@ public class SetupInit extends Constants {
 			message = entry.getValue();
 		}
 		try {
-			if (element == null) {
+			if (element == null)
 				throw new Exception();
-			}
 		} catch (Exception e) {
-			String ExceptionMessage = "Element is not Presen failed: " + getPortableString(message) + ": " + " by : "
+			String ExceptionMessage = "Element is not present failed: " + getPortableString(message) + ": " + " by : "
+					+ locator;
+			exceptionOnFailure(false, ExceptionMessage, time);
+		}
+		return element;
+	}
+
+	public WebElement findClickableElement(By locator, int... time) {
+		String message = "";
+		WebElement element = null;
+		Map<WebElement, String> elementState = new HashMap<>();
+		elementState = waitForElementState(locator, Condition.isClickable, getTimeOut(time));
+		for (Map.Entry<WebElement, String> entry : elementState.entrySet()) {
+			element = entry.getKey();
+			message = entry.getValue();
+		}
+		try {
+			if (element == null)
+				throw new Exception();
+		} catch (Exception e) {
+			String ExceptionMessage = "Element is not clickable failed: " + getPortableString(message) + ": " + " by : "
 					+ locator;
 			exceptionOnFailure(false, ExceptionMessage, time);
 		}
@@ -410,6 +419,10 @@ public class SetupInit extends Constants {
 
 	private Map<WebElement, String> waitForElementState(By locator, Condition condition, int time) {
 		WebElement element;
+		do {
+		} while (!waitForLoader());
+		do {
+		} while (!isAjaxCallCompleted());
 		Map<WebElement, String> map = new HashMap<>();
 		element = getElement(condition, locator, time);
 		String message = "";
@@ -421,7 +434,6 @@ public class SetupInit extends Constants {
 			}
 		} else {
 			message = "State = " + condition.toString() + " Passed: ";
-
 		}
 		map.put(element, message);
 		return map;
@@ -438,9 +450,7 @@ public class SetupInit extends Constants {
 				break;
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
 		}
-
 		return false;
 	}
 
@@ -470,15 +480,21 @@ public class SetupInit extends Constants {
 				break;
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
 		}
-
 		return element;
 	}
 
 	public void pauseInSeconds(int i) {
 		try {
 			Thread.sleep(1000 * i);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void pauseInMilliSeconds(int i) {
+		try {
+			Thread.sleep(i);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -561,12 +577,7 @@ public class SetupInit extends Constants {
 	}
 
 	public boolean waitForLoader() {
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
+		pauseInMilliSeconds(400);
 		if (isLoderDisplayed(By.xpath("//html[@class='nprogress-busy']"))) {
 			Instant currentTime = getCurrentTime();
 			while (isLoderDisplayed(By.xpath("//html[@class='nprogress-busy']"))) {
@@ -581,11 +592,7 @@ public class SetupInit extends Constants {
 						driver.close();
 				}
 			}
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			pauseInMilliSeconds(400);
 		}
 		return true;
 	}
@@ -605,7 +612,7 @@ public class SetupInit extends Constants {
 		log(createScreenshotLink(screenShotName, screenShotLoaction.toString()));
 	}
 
-	public void log(String message) {
+	public synchronized void log(String message) {
 		Reporter.log(message);
 	}
 
@@ -689,6 +696,48 @@ public class SetupInit extends Constants {
 		dataMap.put("Failed Screenshot path", makeScreenshot(className, dataMap.get("Method Name").toString()));
 		logMatrics.logToElasticsearch(dataMap);
 		e.printStackTrace();
+	}
+
+	public void logData(Map<Object, Object> map) {
+		// map.put("Steps To Reproduce", logList);
+		Map<String, Object> dataMap = getDataMap(map);
+		if (dataMap.get("value") == null) {
+			dataMap.put("value", 50);
+
+			endTime = System.currentTimeMillis();
+			if (endTime > end)
+				end = endTime / 1000;
+			if ((Long) map.get("Test Start Time") < start) {
+				startMS = (Long) dataMap.get("Test Start Time");
+				start = startMS / 1000;
+			}
+			dataMap.put("Test Start Time", Utility.formatTime(startMS));
+			dataMap.put("Test End Time", Utility.formatTime(endTime));
+			dataMap.put("Total Execution Time", Utility.millisToTimeConversion(end - start));
+			logMatrics.logToElasticsearch(dataMap);
+
+		} else if ((Integer) map.get("value") == 100) {
+
+			endTime = System.currentTimeMillis();
+			if (endTime > end)
+				end = endTime / 1000;
+			if ((Long) map.get("Test Start Time") < start) {
+				startMS = (Long) dataMap.get("Test Start Time");
+				start = startMS / 1000;
+			}
+			dataMap.put("Test Start Time", Utility.formatTime(startMS));
+			dataMap.put("Test End Time", Utility.formatTime(endTime));
+			dataMap.put("Total Execution Time", Utility.millisToTimeConversion(end - start));
+
+			logMatrics.logToElasticsearch(dataMap);
+		} else if ((Integer) dataMap.get("value") == 0) {
+			try {
+				// logStatus(false);
+				Assert.assertTrue(false);
+			} catch (Exception e) {
+				throw new RuntimeException(dataMap.get("Failure Reason").toString());
+			}
+		}
 	}
 
 	public Map<String, Object> getDataMap(Map<Object, Object> map) {
@@ -839,11 +888,10 @@ public class SetupInit extends Constants {
 	public boolean isVarArgsPassed(int[] j) {
 		if (j != null) {
 			if (j.length > 0) {
-				if (j[0] > 0) {
+				if (j[0] > 0)
 					return true;
-				} else {
+				else
 					return false;
-				}
 			}
 		}
 		return false;

@@ -25,7 +25,7 @@ public class Constants {
 			+ "/";
 	static final String DOWNLOADS_FOLDER = ReadProperty.getPropertyValue("DOWNLOADS_FOLDER");
 	static final String DEPENDENCIES_FOLDER = (currentDir + File.separator
-			+ ReadProperty.getPropertyValue("DEPENDENCIES_FOLDER"));
+			+ ReadProperty.getPropertyValue("DEPENDENCIES_FOLDER")) + File.separator;
 	static final String APPLICATIONS_FOLDER = (currentDir + File.separator
 			+ ReadProperty.getPropertyValue("APPLICATIONS_FOLDER"));
 	static final int DEFAULT_PAUSE_INSECONDS = 2;
@@ -73,4 +73,16 @@ public class Constants {
 	String regexAuthor;
 	LoginPage loginPage;
 	LogMatrics logMatrics = new LogMatrics(elasticIndex, indexType);
+	protected enum Condition {
+		isDisplayed, isClickable, isPresent, isNotVisible
+	}
+
+	protected enum Speed {
+		slow
+	}
+
+	// ******************************* Test Data File
+	// *******************************//
+	public static final String PLATEFORMCONFIGURATION_FILE_PATH = TESTDATA_FOLDER + File.separator
+			+ "Mobifin_5.0_BusinessAndCRUDData.xls";
 }

@@ -10,7 +10,7 @@ public class ReadProperty {
 	public static String getPropertyValue(String key) {
 		FileReader reader = null;
 		try {
-			reader = new FileReader(".//test_data//Configuration.properties");
+			reader = new FileReader(".//TestData//Configuration.properties");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}  

@@ -12,6 +12,8 @@ public class LoginPage extends SetupInit implements Login {
 	}
 
 	public void login(String userNameVal, String passwordVal) {
-	
+		sendKeys(unmTextBox, userNameVal);
+		sendKeys(pwdTextBox, passwordVal);
+		clickOnElement(loginBtn, 0);
 	}
 }
