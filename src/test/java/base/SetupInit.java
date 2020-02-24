@@ -309,23 +309,6 @@ public class SetupInit extends CommonConstants {
 		return driver;
 	}
 
-	public String getText(By locator, int... timeOrAssert) {
-		return findVisibleElement(locator, timeOrAssert).getText();
-	}
-
-	public void clickOnElement(By locator, int... timeOrAssert) {
-		findVisibleElement(locator, timeOrAssert).click();
-	}
-
-	public void sendKeys(By locator, String text, int... timeOrAssert) {
-		findVisibleElement(locator, timeOrAssert).sendKeys(text);
-	}
-
-	public void selectFromDropDown(By dropDownLoc, By valueLoc) {
-		clickOnElement(dropDownLoc);
-		clickOnElement(valueLoc);
-	}
-
 	public boolean verifyVisible(By locator, int... timeOrAssert) {
 		return findVisibleElement(locator, timeOrAssert).isDisplayed();
 	}
@@ -352,6 +335,73 @@ public class SetupInit extends CommonConstants {
 			message = "getElementList failed: " + getPortableString(e.toString()) + ", locator by : " + locator;
 		}
 		return elementLst;
+	}
+
+	public void selectFromDropDown(By dropDownLoc, By valueLoc) {
+		clickOnElement(dropDownLoc);
+		clickOnElement(valueLoc);
+	}
+
+	public String getElementText(By locator, int... timeOrAssert) {
+		String message = "";
+		WebElement element = null;
+		Map<WebElement, String> elementState = new HashMap<>();
+		elementState = waitForElementState(locator, Condition.isDisplayed, getTimeOut(timeOrAssert));
+		for (Map.Entry<WebElement, String> entry : elementState.entrySet()) {
+			element = entry.getKey();
+			message = entry.getValue();
+		}
+		try {
+			if (element == null)
+				throw new Exception();
+		} catch (Exception e) {
+			String ExceptionMessage = "Get text for element is failed: " + getPortableString(message) + ": " + " by : "
+					+ locator;
+			exceptionOnFailure(false, ExceptionMessage, timeOrAssert);
+		}
+		return element.getText();
+	}
+
+	public void clickOnElement(By locator, int... timeOrAssert) {
+		String message = "";
+		WebElement element = null;
+		Map<WebElement, String> elementState = new HashMap<>();
+		elementState = waitForElementState(locator, Condition.isDisplayed, getTimeOut(timeOrAssert));
+		for (Map.Entry<WebElement, String> entry : elementState.entrySet()) {
+			element = entry.getKey();
+			message = entry.getValue();
+		}
+		try {
+			if (element == null)
+				throw new Exception();
+			else
+				element.click();
+		} catch (Exception e) {
+			String ExceptionMessage = "Click on Element is failed: " + getPortableString(message) + ": " + " by : "
+					+ locator;
+			exceptionOnFailure(false, ExceptionMessage, timeOrAssert);
+		}
+	}
+
+	public void sendKeys(By locator, String data, int... timeOrAssert) {
+		String message = "";
+		WebElement element = null;
+		Map<WebElement, String> elementState = new HashMap<>();
+		elementState = waitForElementState(locator, Condition.isDisplayed, getTimeOut(timeOrAssert));
+		for (Map.Entry<WebElement, String> entry : elementState.entrySet()) {
+			element = entry.getKey();
+			message = entry.getValue();
+		}
+		try {
+			if (element == null)
+				throw new Exception();
+			else
+				element.sendKeys(data);
+		} catch (Exception e) {
+			String ExceptionMessage = "Send skeys on Element is failed: " + getPortableString(message) + ": " + " by : "
+					+ locator;
+			exceptionOnFailure(false, ExceptionMessage, timeOrAssert);
+		}
 	}
 
 	public WebElement findVisibleElement(By locator, int... timeOrAssert) {
