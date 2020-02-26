@@ -2,7 +2,7 @@ package testCases;
 
 import java.util.Map;
 
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import base.SetupInit;
@@ -16,9 +16,10 @@ public class PlatformConfigurationParameter extends SetupInit {
 	HomePage homePage;
 	NavigationPage navigationPage;
 	PlatformConfigurationParameterPage platformConfigurationParameterPage;
+	SetupInit init;
 
-	@BeforeClass
-	public void beforeClass() {
+	@BeforeMethod
+	public void beforeMethod() {
 		homePage = new HomePage(getDriver());
 		navigationPage = new NavigationPage(getDriver());
 		platformConfigurationParameterPage = new PlatformConfigurationParameterPage(getDriver());

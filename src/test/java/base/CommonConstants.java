@@ -51,7 +51,7 @@ public class CommonConstants {
 	String configFilePath;
 	int MAX_WAIT_TIME_IN_SEC = Integer.parseInt(ReadProperty.getPropertyValue("MAX_WAIT_TIME_IN_SEC"));
 	Date testStartTime;
-	protected WebDriver driver;
+	public WebDriver driver;
 	Wait<WebDriver> wait;
 	static URL remote_grid;
 	int reloadCounter = 0;

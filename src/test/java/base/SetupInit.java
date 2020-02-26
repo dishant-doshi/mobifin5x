@@ -314,7 +314,7 @@ public class SetupInit extends CommonConstants {
 	}
 
 	public boolean veifyElementIsNotVisible(By locator, int... time) {
-		return waitForInvisble(Condition.isNotVisible, locator, getTimeOut(time));
+		return waitForInvisble(Condition.isNotVisible, locator, getInvisibilityTimeOut(time));
 	}
 
 	public List<String> getTextFromElementList(By locator, int... timeOrAssert) {
@@ -338,8 +338,8 @@ public class SetupInit extends CommonConstants {
 	}
 
 	public void selectFromDropDown(By dropDownLoc, By valueLoc) {
-		clickOnElement(dropDownLoc);
-		clickOnElement(valueLoc);
+		clickOnElement(dropDownLoc, 5);
+		clickOnElement(valueLoc, 5);
 	}
 
 	public String getElementText(By locator, int... timeOrAssert) {
@@ -395,8 +395,10 @@ public class SetupInit extends CommonConstants {
 		try {
 			if (element == null)
 				throw new Exception();
-			else
+			else {
+				element.clear();
 				element.sendKeys(data);
+			}
 		} catch (Exception e) {
 			String ExceptionMessage = "Send skeys on Element is failed: " + getPortableString(message) + ": " + " by : "
 					+ locator;
@@ -466,6 +468,14 @@ public class SetupInit extends CommonConstants {
 
 	private int getTimeOut(int[] time) {
 		int timeOut = MAX_WAIT_TIME_IN_SEC;
+		if (time.length != 0)
+			if (time[0] > 0)
+				timeOut = time[0];
+		return timeOut;
+	}
+
+	private int getInvisibilityTimeOut(int[] time) {
+		int timeOut = 10;
 		if (time.length != 0)
 			if (time[0] > 0)
 				timeOut = time[0];
@@ -620,16 +630,16 @@ public class SetupInit extends CommonConstants {
 		return state;
 	}
 
-	public boolean isDisplayed(By locator, int... wait) {
-		boolean state = false;
-		WebElement element = findVisibleElement(locator, getTimeOut(wait));
-		try {
-			state = element.isDisplayed();
-		} catch (Exception e) {
-			RuntimeException re = new RuntimeException();
-		}
-		return state;
-	}
+//	public boolean isDisplayed(By locator, int... wait) {
+//		boolean state = false;
+//		WebElement element = findVisibleElement(locator, getTimeOut(wait));
+//		try {
+//			state = element.isDisplayed();
+//		} catch (Exception e) {
+//			RuntimeException re = new RuntimeException();
+//		}
+//		return state;
+//	}
 
 	public boolean waitForLoader() {
 		pauseInMilliSeconds(400);
@@ -969,4 +979,5 @@ public class SetupInit extends CommonConstants {
 	public void setFailureParameters(Map<Object, Object> map) {
 		map.put("Value", 0);
 	}
+
 }

@@ -273,6 +273,8 @@ public class Utility {
 	}
 
 	public static String readJSFile(String search, String fileName) {
+		if (fileName.contains("en-US.js"))
+			search = "'" + search + "'";
 		String[] searchString = null;
 		String result = "";
 		Path path = Paths.get(fileName);

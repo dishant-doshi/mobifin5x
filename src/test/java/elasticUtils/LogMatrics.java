@@ -31,7 +31,7 @@ public class LogMatrics {
 
 	private String indexName;
 	private String indexType;
-	private int waitSeconds = 0;
+	public int waitSeconds = 0;
 
 	public LogMatrics() {
 
