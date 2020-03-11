@@ -26,8 +26,7 @@ public class TestDataImport extends SetupInit {
 		for (int i = 1; i < lastRowNum; i++) {
 			Map<Object, Object> map = new LinkedHashMap<Object, Object>();
 			for (int j = 0; j < sheet.getColumns(); j++) {
-				map.put(removeExtraSpaces(
-						sheet.getCell(j, 0).getContents().toString().trim().replaceAll("  ", " ").toLowerCase()),
+				map.put(removeExtraSpaces(sheet.getCell(j, 0).getContents().toString().trim().replaceAll("  ", " ")),
 						removeExtraSpaces(sheet.getCell(j, i).getContents().toString().trim().replaceAll("  ", " ")));
 			}
 			object[i - 1][0] = map;
@@ -81,13 +80,23 @@ public class TestDataImport extends SetupInit {
 		return map;
 	}
 
-	/**
-	 * @author shivani.patel data provider for add parameter
-	 * @return excel data
-	 * @creation date 17/07/2019
-	 */
 	@DataProvider(name = "Parameter_Add")
 	public static Object[][] Parameter_Add() {
 		return readExcelFileTo2D(PLATEFORMCONFIGURATION_FILE_PATH, "Parameter_Add");
+	}
+
+	@DataProvider(name = "SystemOperatorEntity_Add")
+	public static Object[][] SystemOperatorEntity_Add() {
+		return readExcelFileTo2D(OPERATORCONFIG_FILE_PATH, "SystemOperatorEntity_Add");
+	}
+
+	@DataProvider(name = "SystemOperatorOnboarding_Add")
+	public static Object[][] SystemOperatorOnboarding_Add() {
+		return readExcelFileTo2D(OPERATORCONFIG_FILE_PATH, "SystemOperatorOnboarding_Add");
+	}
+	
+	@DataProvider(name = "OperatingEntity_Add")
+	public static Object[][] OperatingEntity_Add() {
+		return readExcelFileTo2D(BUSINESSCONFIG_FILE_PATH, "OperatingEntity_Add");
 	}
 }

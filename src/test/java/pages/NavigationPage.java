@@ -50,13 +50,35 @@ public class NavigationPage extends SetupInit {
 	By scheduler = By.id("Scheduler");
 	By processScheduler = By.id("Process Scheduler");
 	By processRunDetails = By.id("Process Run Details");
+	By userManagement = By.xpath("//*[@class='ant-menu-submenu-title']//*[normalize-space(text())='User Management']");
+	By viewUser = By.id("View User");
 
 	public NavigationPage(WebDriver driver) {
 		this.driver = driver;
 	}
 
 	public void clickOnPlateformConfigurationParameter() {
-		clickOnElement(platformConfiguration);
-		clickOnElement(parameter);
+		clickOnElement(platformConfiguration, 0);
+		clickOnElement(parameter, 0);
+	}
+
+	public void clickOnOperatorConfigSystemOperatorEntity() {
+		clickOnElement(operatorConfiguration, 0);
+		clickOnElement(systemOperatorEntity, 0);
+	}
+
+	public void clickOnOperatorConfigSystemOperatorOnboarding() {
+		clickOnElement(operatorConfiguration, 0);
+		clickOnElement(systemOperatorOnboarding, 0);
+	}
+
+	public void clickOnBusinessConfigOperatingEntity() {
+		clickOnElement(businessConfiguration, 0);
+		clickOnElement(businessZone, 0);
+	}
+
+	public void clickOnUserManagementViewUser() {
+		clickOnElement(userManagement, 0);
+		clickOnElement(viewUser, 0);
 	}
 }

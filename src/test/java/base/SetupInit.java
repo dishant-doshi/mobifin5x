@@ -310,11 +310,12 @@ public class SetupInit extends CommonConstants {
 	}
 
 	public boolean verifyVisible(By locator, int... timeOrAssert) {
-		return findVisibleElement(locator, timeOrAssert).isDisplayed();
+		WebElement element = findVisibleElement(locator, timeOrAssert);
+		return element != null ? element.isDisplayed() : false;
 	}
 
 	public boolean veifyElementIsNotVisible(By locator, int... time) {
-		return waitForInvisble(Condition.isNotVisible, locator, getInvisibilityTimeOut(time));
+		return !verifyVisible(locator, time);
 	}
 
 	public List<String> getTextFromElementList(By locator, int... timeOrAssert) {
@@ -337,9 +338,9 @@ public class SetupInit extends CommonConstants {
 		return elementLst;
 	}
 
-	public void selectFromDropDown(By dropDownLoc, By valueLoc) {
-		clickOnElement(dropDownLoc, 5);
-		clickOnElement(valueLoc, 5);
+	public void selectFromDropDown(By dropDownLoc, By valueLoc, int... time) {
+		clickOnElement(dropDownLoc, time);
+		clickOnElement(valueLoc, time);
 	}
 
 	public String getElementText(By locator, int... timeOrAssert) {
@@ -362,6 +363,18 @@ public class SetupInit extends CommonConstants {
 		return element.getText();
 	}
 
+	public String getElementText(WebElement element, int... timeOrAssert) {
+		try {
+			if (element == null)
+				throw new Exception();
+		} catch (Exception e) {
+			String ExceptionMessage = "Get text for element is failed: " + getPortableString(e.toString()) + ": "
+					+ " by : " + element;
+			exceptionOnFailure(false, ExceptionMessage, timeOrAssert);
+		}
+		return element.getText();
+	}
+
 	public void clickOnElement(By locator, int... timeOrAssert) {
 		String message = "";
 		WebElement element = null;
@@ -374,13 +387,37 @@ public class SetupInit extends CommonConstants {
 		try {
 			if (element == null)
 				throw new Exception();
-			else
+			else {
+				String value = getElementText(element);
+				if (value.equals("") || value.equals(null) || value.equals(" ")) {
+					List<String> attributes = getElementAttributes(element);
+					if (attributes.contains("name") && (!element.getAttribute("name").equals("")
+							|| !element.getAttribute("name").equals(null))) {
+						value = element.getAttribute("name");
+					} else if (attributes.contains("id")
+							&& (!element.getAttribute("id").equals("") || !element.getAttribute("id").equals(null))) {
+						value = element.getAttribute("id");
+					} else if (attributes.contains("class") && (!element.getAttribute("class").equals("")
+							|| !element.getAttribute("class").equals(null))) {
+						value = element.getAttribute("class");
+					} else if (attributes.contains("value") && (!element.getAttribute("value").equals("")
+							|| !element.getAttribute("value").equals(null))) {
+						value = element.getAttribute("value");
+					}
+				}
 				element.click();
+				value = "<b><span style='color:#3f0713'>" + value + "</span></b>";
+				log("Clicked on " + value);
+			}
 		} catch (Exception e) {
 			String ExceptionMessage = "Click on Element is failed: " + getPortableString(message) + ": " + " by : "
 					+ locator;
 			exceptionOnFailure(false, ExceptionMessage, timeOrAssert);
 		}
+	}
+
+	public void removeReadOnlyProperty(WebElement webElement) {
+		((JavascriptExecutor) driver).executeScript("arguments[0].removeAttribute('readonly','readonly')", webElement);
 	}
 
 	public void sendKeys(By locator, String data, int... timeOrAssert) {
@@ -398,12 +435,94 @@ public class SetupInit extends CommonConstants {
 			else {
 				element.clear();
 				element.sendKeys(data);
+				String value = getElementText(element);
+				if (value.equals("") || value.equals(null) || value.equals(" ")) {
+					List<String> attributes = getElementAttributes(element);
+					if (attributes.contains("name") && (!element.getAttribute("name").equals("")
+							|| !element.getAttribute("name").equals(null))) {
+						value = element.getAttribute("name");
+					} else if (attributes.contains("id")
+							&& (!element.getAttribute("id").equals("") || !element.getAttribute("id").equals(null))) {
+						value = element.getAttribute("id");
+					} else if (attributes.contains("class") && (!element.getAttribute("class").equals("")
+							|| !element.getAttribute("class").equals(null))) {
+						value = element.getAttribute("class");
+					} else if (attributes.contains("value") && (!element.getAttribute("value").equals("")
+							|| !element.getAttribute("value").equals(null))) {
+						value = element.getAttribute("value");
+					}
+				}
+				value = "<b><span style='color:#3f0713'>" + value + "</span></b>";
+				data = "<b><span style='color:#418eb5'>" + data + "</span></b>";
+				log("Sent text in " + value + ": " + data);
 			}
 		} catch (Exception e) {
 			String ExceptionMessage = "Send skeys on Element is failed: " + getPortableString(message) + ": " + " by : "
 					+ locator;
 			exceptionOnFailure(false, ExceptionMessage, timeOrAssert);
 		}
+	}
+
+	public void sendKeysWithRemoveReadOnlyProperty(By locator, String data, int... timeOrAssert) {
+		String message = "";
+		WebElement element = null;
+		Map<WebElement, String> elementState = new HashMap<>();
+		elementState = waitForElementState(locator, Condition.isDisplayed, getTimeOut(timeOrAssert));
+		for (Map.Entry<WebElement, String> entry : elementState.entrySet()) {
+			element = entry.getKey();
+			message = entry.getValue();
+		}
+		try {
+			if (element == null)
+				throw new Exception();
+			else {
+				removeReadOnlyProperty(element);
+				element.clear();
+				element.sendKeys(data);
+				String value = getElementText(element);
+				if (value.equals("") || value.equals(null) || value.equals(" ")) {
+					List<String> attributes = getElementAttributes(element);
+					if (attributes.contains("name") && (!element.getAttribute("name").equals("")
+							|| !element.getAttribute("name").equals(null))) {
+						value = element.getAttribute("name");
+					} else if (attributes.contains("id")
+							&& (!element.getAttribute("id").equals("") || !element.getAttribute("id").equals(null))) {
+						value = element.getAttribute("id");
+					} else if (attributes.contains("class") && (!element.getAttribute("class").equals("")
+							|| !element.getAttribute("class").equals(null))) {
+						value = element.getAttribute("class");
+					} else if (attributes.contains("value") && (!element.getAttribute("value").equals("")
+							|| !element.getAttribute("value").equals(null))) {
+						value = element.getAttribute("value");
+					}
+				}
+				value = "<b><span style='color:#3f0713'>" + value + "</span></b>";
+				data = "<b><span style='color:#418eb5'>" + data + "</span></b>";
+				log("Sent text in " + value + ": " + data);
+			}
+		} catch (Exception e) {
+			String ExceptionMessage = "Send skeys on Element is failed: " + getPortableString(message) + ": " + " by : "
+					+ locator;
+			exceptionOnFailure(false, ExceptionMessage, timeOrAssert);
+		}
+	}
+
+	public List<String> getElementAttributes(WebElement element) {
+		List<String> elementAttributes = new ArrayList<String>();
+		JavascriptExecutor executor = (JavascriptExecutor) driver;
+		try {
+			Object attribute = executor.executeScript(
+					"var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value }; return items;",
+					element);
+			String[] attributes = attribute.toString().split(",");
+			for (int i = 0; i < attributes.length; i++) {
+				elementAttributes.add(attributes[i].split("=")[0].replace("{", "").replaceAll(" ", ""));
+			}
+		} catch (Exception e) {
+			log("<b><span style='color:red'> Element " + element
+					+ " contaning an attribute having null value </span></b>");
+		}
+		return elementAttributes;
 	}
 
 	public WebElement findVisibleElement(By locator, int... timeOrAssert) {
@@ -544,6 +663,8 @@ public class SetupInit extends CommonConstants {
 			default:
 				break;
 			}
+			if (!isVisibleInViewport(element))
+				scrollToElement(element);
 		} catch (Exception e) {
 		}
 		return element;
@@ -630,30 +751,30 @@ public class SetupInit extends CommonConstants {
 		return state;
 	}
 
-//	public boolean isDisplayed(By locator, int... wait) {
-//		boolean state = false;
-//		WebElement element = findVisibleElement(locator, getTimeOut(wait));
-//		try {
-//			state = element.isDisplayed();
-//		} catch (Exception e) {
-//			RuntimeException re = new RuntimeException();
-//		}
-//		return state;
-//	}
+	// public boolean isDisplayed(By locator, int... wait) {
+	// boolean state = false;
+	// WebElement element = findVisibleElement(locator, getTimeOut(wait));
+	// try {
+	// state = element.isDisplayed();
+	// } catch (Exception e) {
+	// RuntimeException re = new RuntimeException();
+	// }
+	// return state;
+	// }
 
 	public boolean waitForLoader() {
 		pauseInMilliSeconds(400);
-		if (isLoderDisplayed(By.xpath("//html[@class='nprogress-busy']"))) {
+		if (isLoderDisplayed(By.xpath("//*[contains(@class,'loader')]"))) {
 			Instant currentTime = getCurrentTime();
-			while (isLoderDisplayed(By.xpath("//html[@class='nprogress-busy']"))) {
+			while (isLoderDisplayed(By.xpath("//*[contains(@class,'loader')]"))) {
 				Instant loopingTime = getCurrentTime();
 				Duration timeElapsed = Duration.between(currentTime, loopingTime);
 				long sec = timeElapsed.toMillis() / 1000;
 				int durDiff = (int) sec;
-				if (durDiff >= MAX_WAIT_TIME_IN_SEC) {
+				if (durDiff >= 180) {
 					reloadCurrentPage();
 					reloadCounter++;
-					if (reloadCounter == 3)
+					if (reloadCounter == 6)
 						driver.close();
 				}
 			}

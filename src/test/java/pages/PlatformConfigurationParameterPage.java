@@ -327,57 +327,57 @@ public class PlatformConfigurationParameterPage extends SetupInit {
 				map.get(mapKeys.get(15)).toString(), true);
 		if (verifyVisible(By.xpath(String.format(verifyElement, map.get(mapKeys.get(1)).toString())))) {
 			common.clickOnInfoBtn(map.get(mapKeys.get(1)).toString());
-			if (veifyElementIsNotVisible(By.xpath(String.format(name, map.get(mapKeys.get(1)).toString()))))
+			if (verifyVisible(By.xpath(String.format(name, map.get(mapKeys.get(1)).toString()))))
 				return false;
-			if (veifyElementIsNotVisible(By.xpath(String.format(description, map.get(mapKeys.get(2)).toString()))))
+			if (verifyVisible(By.xpath(String.format(description, map.get(mapKeys.get(2)).toString()))))
 				return false;
-			if (veifyElementIsNotVisible(By.xpath(String.format(FieldType, map.get(mapKeys.get(3)).toString()))))
+			if (verifyVisible(By.xpath(String.format(FieldType, map.get(mapKeys.get(3)).toString()))))
 				return false;
-			if (veifyElementIsNotVisible(By.xpath(String.format(usedBy, map.get(mapKeys.get(15)).toString()))))
+			if (verifyVisible(By.xpath(String.format(usedBy, map.get(mapKeys.get(15)).toString()))))
 				return false;
 			if (map.get(mapKeys.get(3)).toString().toLowerCase().equals("base")) {
-				if (veifyElementIsNotVisible(
+				if (verifyVisible(
 						By.xpath(String.format(ComponentType, map.get(mapKeys.get(4)).toString()))))
 					return false;
 				switch (map.get(mapKeys.get(4)).toString().toLowerCase()) {
 				case "textbox":
-					if (veifyElementIsNotVisible(By.xpath(String.format(DataType, map.get(mapKeys.get(5)).toString()))))
+					if (verifyVisible(By.xpath(String.format(DataType, map.get(mapKeys.get(5)).toString()))))
 						return false;
 					if (!map.get(mapKeys.get(3)).toString().trim().equals(""))
-						if (veifyElementIsNotVisible(
+						if (verifyVisible(
 								By.xpath(String.format(RegEx, map.get(mapKeys.get(6)).toString()))))
 							return false;
-					if (veifyElementIsNotVisible(
+					if (verifyVisible(
 							By.xpath(String.format(ValidationMessage, map.get(mapKeys.get(7)).toString()))))
 						return false;
 					break;
 				case "dropdown":
-					if (veifyElementIsNotVisible(
+					if (verifyVisible(
 							By.xpath(String.format(ValueSource, map.get(mapKeys.get(16)).toString()))))
 						return false;
 					if (map.get(mapKeys.get(16)).toString().trim().toLowerCase().equals("parameter")) {
 						String[] fieldNameList = map.get(mapKeys.get(11)).toString().split(",");
 						for (int m = 0; m < fieldNameList.length; m++)
-							if (veifyElementIsNotVisible(By.xpath(String.format(fieldName, fieldNameList[m]))))
+							if (verifyVisible(By.xpath(String.format(fieldName, fieldNameList[m]))))
 								return false;
 					} else {
-						if (veifyElementIsNotVisible(
+						if (verifyVisible(
 								By.xpath(String.format(PossibleValue, map.get(mapKeys.get(9)).toString()))))
 							return false;
 					}
 					break;
 				case "checkbox":
-					if (veifyElementIsNotVisible(
+					if (verifyVisible(
 							By.xpath(String.format(ChildField, map.get(mapKeys.get(8)).toString()))))
 						return false;
 					break;
 				case "radiobutton":
-					if (veifyElementIsNotVisible(
+					if (verifyVisible(
 							By.xpath(String.format(ChildField, map.get(mapKeys.get(8)).toString()))))
 						return false;
 					break;
 				case "label":
-					if (veifyElementIsNotVisible(
+					if (verifyVisible(
 							By.xpath(String.format(PossibleValue, map.get(mapKeys.get(9)).toString()))))
 						return false;
 					break;
@@ -385,26 +385,26 @@ public class PlatformConfigurationParameterPage extends SetupInit {
 					break;
 				case "fileselector":
 					if (!map.get(mapKeys.get(3)).toString().trim().equals(""))
-						if (veifyElementIsNotVisible(
+						if (verifyVisible(
 								By.xpath(String.format(RegEx, map.get(mapKeys.get(6)).toString()))))
 							return false;
-					if (veifyElementIsNotVisible(
+					if (verifyVisible(
 							By.xpath(String.format(ValidationMessage, map.get(mapKeys.get(7)).toString()))))
 						return false;
 					break;
 				case "hyperlink":
-					if (veifyElementIsNotVisible(
+					if (verifyVisible(
 							By.xpath(String.format(PossibleValue, map.get(mapKeys.get(9)).toString()))))
 						return false;
 					break;
 				case "password":
-					if (veifyElementIsNotVisible(By.xpath(String.format(DataType, map.get(mapKeys.get(5)).toString()))))
+					if (verifyVisible(By.xpath(String.format(DataType, map.get(mapKeys.get(5)).toString()))))
 						return false;
 					if (!map.get(mapKeys.get(3)).toString().trim().equals(""))
-						if (veifyElementIsNotVisible(
+						if (verifyVisible(
 								By.xpath(String.format(RegEx, map.get(mapKeys.get(6)).toString()))))
 							return false;
-					if (veifyElementIsNotVisible(
+					if (verifyVisible(
 							By.xpath(String.format(ValidationMessage, map.get(mapKeys.get(7)).toString()))))
 						return false;
 					break;
@@ -412,7 +412,7 @@ public class PlatformConfigurationParameterPage extends SetupInit {
 			} else {
 				String[] fieldNameList = map.get(mapKeys.get(11)).toString().split(",");
 				for (int m = 0; m < fieldNameList.length; m++)
-					if (veifyElementIsNotVisible(By.xpath(String.format(fieldName, fieldNameList[m]))))
+					if (verifyVisible(By.xpath(String.format(fieldName, fieldNameList[m]))))
 						return false;
 			}
 			return true;

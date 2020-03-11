@@ -17,13 +17,17 @@ public class CommonPage extends SetupInit {
 	By btnFilterSearch = By.id("searchbutton");
 	By stripText = By.xpath("(//*[@class='ant-notification-notice-message'])[last()]");
 	String info = "//td[normalize-space(text())='%s']//preceding-sibling::td[@class='center-align']//i";
+	By btnSubmit = By.xpath("//span[normalize-space(text())='Submit']//parent::button");
+	By btnNext = By.xpath("//span[normalize-space(text())='Next']//parent::button");
+	By btnDeleteConfirm = By.xpath("(//*[@class='ant-btn ant-btn-primary'])[last()]");
+	By btnClose = By.xpath("//button[@aria-label='Close']");
 
 	public CommonPage(WebDriver driver) {
 		this.driver = driver;
 	}
 
 	public void clickOnAddButton() {
-		clickOnElement(btnAdd);
+		clickOnElement(btnAdd, 0);
 	}
 
 	public void clickOnFilterBtn() {
@@ -35,7 +39,7 @@ public class CommonPage extends SetupInit {
 	}
 
 	public void clickOnFilterSearchBtn() {
-		clickOnElement(btnFilterSearch);
+		clickOnElement(btnFilterSearch, 0);
 	}
 
 	public void commonFilterSearch() {
@@ -44,11 +48,11 @@ public class CommonPage extends SetupInit {
 	}
 
 	public void clickOnSaveBtn() {
-		clickOnElement(btnSave);
+		clickOnElement(btnSave, 0);
 	}
 
 	public boolean isStriptTextDisplayed() {
-		if (verifyElementIsDisplayed(stripText)) {
+		if (verifyVisible(stripText)) {
 			String text;
 			try {
 				text = "Strip Confirmation Message : " + getElementText(stripText);
@@ -66,5 +70,22 @@ public class CommonPage extends SetupInit {
 
 	public void clickOnInfoBtn(String string) {
 		clickOnElement(By.xpath(String.format(info, string)));
+		waitForLoader();
+	}
+
+	public void clickOnNextBtn() {
+		clickOnElement(btnNext);
+	}
+
+	public void clickOnSubmitBtn() {
+		clickOnElement(btnSubmit);
+	}
+
+	public void clickOnDeleteConfirm() {
+		clickOnElement(btnDeleteConfirm);
+	}
+
+	public void clickOnCloseBtn() {
+		clickOnElement(btnClose);
 	}
 }

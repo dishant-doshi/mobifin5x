@@ -11,11 +11,13 @@ import elasticUtils.LogMatrics;
 import pages.LoginPage;
 import utils.ReadProperty;
 import utils.ReadXMLData;
+import utils.Utility;
 
 public class CommonConstants {
 	static String currentDir = System.getProperty("user.dir");
-	final String elasticIndex = "";
-	final String indexType = "";
+	final String elasticIndex = "automation_r&d_" + Utility.getCurrentDate();
+//	final String elasticIndex = "";
+	final String indexType = "doc";
 	static final String CONFIG_FILE_NAME = ReadProperty.getPropertyValue("ConfigurationFileName");
 	static final String REPORT_FOLDER = ReadProperty.getPropertyValue("REPORT_FOLDER");
 	static final String SCREENSHOT_FOLDER = ReadProperty.getPropertyValue("SCREENSHOT_FOLDER");
@@ -86,6 +88,10 @@ public class CommonConstants {
 
 	// ******************************* Test Data File
 	// *******************************//
-	public static final String PLATEFORMCONFIGURATION_FILE_PATH = TESTDATA_FOLDER + File.separator
-			+ "Mobifin_5.0_BusinessAndCRUDData.xls";
+	public static  String PLATEFORMCONFIGURATION_FILE_PATH = TESTDATA_FOLDER + File.separator
+			+ "Dishant_Mobifin_5.0_BusinessAndCRUDData.xls";
+	public static  String OPERATORCONFIG_FILE_PATH = TESTDATA_FOLDER + File.separator
+			+ "Dishant_Mobifin_5.0_BusinessAndCRUDData.xls";
+	public static  String BUSINESSCONFIG_FILE_PATH = TESTDATA_FOLDER + File.separator
+			+ "Dishant_Mobifin_5.0_BusinessAndCRUDData.xls";
 }

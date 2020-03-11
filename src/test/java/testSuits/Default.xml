@@ -2,21 +2,114 @@
 <!-- <?xml version="1.0" encoding="UTF-8"?> -->
 
 <suite name="MobiFin 4.1.0 - Admin Portal - Settings" verbose="10"
-	parallel="false" thread-count="1">
+	parallel="tests" thread-count="10">
 
 	<listeners>
-		<listener
-			class-name='utils.CustomizedEmailableReport' />
+		<listener class-name='utils.CustomizedEmailableReport' />
 	</listeners>
+
 	<parameter name="browserType" value="chrome" />
 	<parameter name="appURL" value="http://10.10.180.79:7001" />
 
-
-	<test name="Mobifin 5.0.0 : Default Data Script">
+	<test name="Mobifin 5.0.0 : Default Data Script1">
+		<!-- <parameter name="dataFile" -->
+		<!-- value="Dharti_Mobifin_5.0_BusinessAndCRUDData.xls" /> -->
 		<classes>
-			<class name="testCases.PlatformConfigurationParameter" />
+			<class name="testCases.OperatorConfigSystemOperatorEntity" />
+			<class name="testCases.OperatorConfigSystemOperatorOnboarding" />
+			<class name="testCases.BusinessConfigurationOperatingEntity" />
 		</classes>
 	</test>
+
+	<!-- <test name="Mobifin 5.0.0 : Default Data Script2"> -->
+	<!-- <parameter name="dataFile" -->
+	<!-- value="Shivani_Mobifin_5.0_BusinessAndCRUDData.xls" /> -->
+	<!-- <classes> -->
+	<!-- <class name="testCases.OperatorConfigSystemOperatorEntity" /> -->
+	<!-- <class name="testCases.OperatorConfigSystemOperatorOnboarding" /> -->
+	<!-- <class name="testCases.BusinessConfigurationOperatingEntity" /> -->
+	<!-- </classes> -->
+	<!-- </test> -->
+
+	<!-- <test name="Mobifin 5.0.0 : Default Data Script3"> -->
+	<!-- <parameter name="dataFile" -->
+	<!-- value="Dishant_Mobifin_5.0_BusinessAndCRUDData.xls" /> -->
+	<!-- <classes> -->
+	<!-- <class name="testCases.OperatorConfigSystemOperatorEntity" /> -->
+	<!-- <class name="testCases.OperatorConfigSystemOperatorOnboarding" /> -->
+	<!-- <class name="testCases.BusinessConfigurationOperatingEntity" /> -->
+	<!-- </classes> -->
+	<!-- </test> -->
+
+	<!-- <test name="Mobifin 5.0.0 : Default Data Script4"> -->
+	<!-- <parameter name="dataFile" -->
+	<!-- value="Badal_Mobifin_5.0_BusinessAndCRUDData.xls" /> -->
+	<!-- <classes> -->
+	<!-- <class name="testCases.OperatorConfigSystemOperatorEntity" /> -->
+	<!-- <class name="testCases.OperatorConfigSystemOperatorOnboarding" /> -->
+	<!-- <class name="testCases.BusinessConfigurationOperatingEntity" /> -->
+	<!-- </classes> -->
+	<!-- </test> -->
+
+	<!-- <test name="Mobifin 5.0.0 : Default Data Script5"> -->
+	<!-- <parameter name="dataFile" -->
+	<!-- value="Avinash_Mobifin_5.0_BusinessAndCRUDData.xls" /> -->
+	<!-- <classes> -->
+	<!-- <class name="testCases.OperatorConfigSystemOperatorEntity" /> -->
+	<!-- <class name="testCases.OperatorConfigSystemOperatorOnboarding" /> -->
+	<!-- <class name="testCases.BusinessConfigurationOperatingEntity" /> -->
+	<!-- </classes> -->
+	<!-- </test> -->
+
+	<!-- <test name="Mobifin 5.0.0 : Default Data Script6"> -->
+	<!-- <parameter name="dataFile" -->
+	<!-- value="Jimmy_Mobifin_5.0_BusinessAndCRUDData" /> -->
+	<!-- <classes> -->
+	<!-- <class name="testCases.OperatorConfigSystemOperatorEntity" /> -->
+	<!-- <class name="testCases.OperatorConfigSystemOperatorOnboarding" /> -->
+	<!-- <class name="testCases.BusinessConfigurationOperatingEntity" /> -->
+	<!-- </classes> -->
+	<!-- </test> -->
+
+	<!-- <test name="Mobifin 5.0.0 : Default Data Script7"> -->
+	<!-- <parameter name="dataFile" -->
+	<!-- value="Nilay_Mobifin_5.0_BusinessAndCRUDData.xls" /> -->
+	<!-- <classes> -->
+	<!-- <class name="testCases.OperatorConfigSystemOperatorEntity" /> -->
+	<!-- <class name="testCases.OperatorConfigSystemOperatorOnboarding" /> -->
+	<!-- <class name="testCases.BusinessConfigurationOperatingEntity" /> -->
+	<!-- </classes> -->
+	<!-- </test> -->
+
+	<!-- <test name="Mobifin 5.0.0 : Default Data Script8"> -->
+	<!-- <parameter name="dataFile" -->
+	<!-- value="Rutu_Mobifin_5.0_BusinessAndCRUDData.xls" /> -->
+	<!-- <classes> -->
+	<!-- <class name="testCases.OperatorConfigSystemOperatorEntity" /> -->
+	<!-- <class name="testCases.OperatorConfigSystemOperatorOnboarding" /> -->
+	<!-- <class name="testCases.BusinessConfigurationOperatingEntity" /> -->
+	<!-- </classes> -->
+	<!-- </test> -->
+
+	<!-- <test name="Mobifin 5.0.0 : Default Data Script9"> -->
+	<!-- <parameter name="dataFile" -->
+	<!-- value="Mala_Mobifin_5.0_BusinessAndCRUDData.xls" /> -->
+	<!-- <classes> -->
+	<!-- <class name="testCases.OperatorConfigSystemOperatorEntity" /> -->
+	<!-- <class name="testCases.OperatorConfigSystemOperatorOnboarding" /> -->
+	<!-- <class name="testCases.BusinessConfigurationOperatingEntity" /> -->
+	<!-- </classes> -->
+	<!-- </test> -->
+
+	<!-- <test name="Mobifin 5.0.0 : Default Data Script10"> -->
+	<!-- <parameter name="dataFile" -->
+	<!-- value="Kunal_Mobifin_5.0_BusinessAndCRUDData.xls" /> -->
+	<!-- <classes> -->
+	<!-- <class name="testCases.OperatorConfigSystemOperatorEntity" /> -->
+	<!-- <class name="testCases.OperatorConfigSystemOperatorOnboarding" /> -->
+	<!-- <class name="testCases.BusinessConfigurationOperatingEntity" /> -->
+	<!-- </classes> -->
+	<!-- </test> -->
 
 </suite>
 	
