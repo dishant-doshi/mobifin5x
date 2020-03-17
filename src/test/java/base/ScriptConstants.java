@@ -78,13 +78,13 @@ public class ScriptConstants {
 	public static final String PLATFORM_CONFIGURATION = "Platform Config";
 	public static final String PARAMETER = "Parameter";
 	public static final String BUSINESSZONE_OK = "OK";
-	public static final String BUSINESSZONE_ADDBUSINESSZONE = "Add Business Zone";
-	public static final String BUSINESSZONE_VIEW = "View";
+	public static final String BUSINESS_ZONE_ADD_BUSINESSZONE = "Add Business Zone";
+	public static final String BUSINESS_ZONE_VIEW = "View";
 	public static final String BUSINESSZONE_SAVE = "Save";
-	public static final String BUSINESSZONE_EDIT = "Edit";
+	public static final String BUSINESS_ZONE_EDIT = "Edit";
 	public static final String ADDREGIONALENTITY = "Add Regional Business Entity";
 	public static final String REGIONALENTITY_OK = "Ok";
-	public static final String ADDOPERATINGENTITYTEMPLATE = "Add Operating Entity Template";
+	public static final String ADD_OPERATING_ENTITY_TEMPLATE = "Add Operating Entity Template";
 	public static final String ADD_OPERATINGENTITY_ONBOARDING = "Add Operating Entity Onboarding";
 }
 

@@ -38,7 +38,7 @@ public class NavigationPage extends SetupInit {
 	By notification = By.id(Utility.readJSFile("module.name.notification", CommonConstants.LABLE_FILE));
 	By serviceProfile = By.id(Utility.readJSFile("module.name.serviceprofile", CommonConstants.LABLE_FILE));
 	By productManagement = By.id(Utility.readJSFile("module.name.productmanagement", CommonConstants.LABLE_FILE));
-	By businessZone = By.id("Business Hierarchy");
+	By businessHierarchy = By.id("Business Hierarchy");
 	By technicalVendor = By.id(Utility.readJSFile("module.name.technicalvendor", CommonConstants.LABLE_FILE));
 	By walletTemplate = By.id("Wallet Template");
 	By operation = By.xpath("//*[@class='ant-menu-submenu-title']//*[normalize-space(text())='Operation']");
@@ -74,11 +74,21 @@ public class NavigationPage extends SetupInit {
 
 	public void clickOnBusinessConfigOperatingEntity() {
 		clickOnElement(businessConfiguration, 0);
-		clickOnElement(businessZone, 0);
+		clickOnElement(businessHierarchy, 0);
 	}
 
 	public void clickOnUserManagementViewUser() {
 		clickOnElement(userManagement, 0);
 		clickOnElement(viewUser, 0);
+	}
+
+	public void clickOnBusinessConfigOperatingEntityTemplate() {
+		clickOnElement(businessConfiguration, 0);
+		clickOnElement(businessHierarchy, 0);
+	}
+
+	public void clickOnBusinessConfigBusinessZone() {
+		clickOnElement(businessConfiguration, 0);
+		clickOnElement(businessHierarchy, 0);
 	}
 }

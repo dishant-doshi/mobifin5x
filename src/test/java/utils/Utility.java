@@ -295,4 +295,8 @@ public class Utility {
 		List<Object> keys = new ArrayList<Object>(keySet);
 		return keys;
 	}
+
+	public static boolean compareTwoLists(List<String> list1, List<String> list2) {
+		return list1.toString().contentEquals(list2.toString()) ? true : false;
+	}
 }

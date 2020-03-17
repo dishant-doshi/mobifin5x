@@ -16,7 +16,7 @@ import utils.Utility;
 public class CommonConstants {
 	static String currentDir = System.getProperty("user.dir");
 	final String elasticIndex = "automation_r&d_" + Utility.getCurrentDate();
-//	final String elasticIndex = "";
+	// final String elasticIndex = "";
 	final String indexType = "doc";
 	static final String CONFIG_FILE_NAME = ReadProperty.getPropertyValue("ConfigurationFileName");
 	static final String REPORT_FOLDER = ReadProperty.getPropertyValue("REPORT_FOLDER");
@@ -32,7 +32,7 @@ public class CommonConstants {
 			+ ReadProperty.getPropertyValue("APPLICATIONS_FOLDER"));
 	static final int DEFAULT_PAUSE_INSECONDS = 2;
 	String paginationValue = "25";
-	static boolean booleanValue = false;
+	protected static boolean booleanValue = false;
 	Boolean failure = false;
 	String reason = "None";
 	String detailedFailureReason = "None";
@@ -88,10 +88,10 @@ public class CommonConstants {
 
 	// ******************************* Test Data File
 	// *******************************//
-	public static  String PLATEFORMCONFIGURATION_FILE_PATH = TESTDATA_FOLDER + File.separator
+	public static String PLATEFORMCONFIGURATION_FILE_PATH = TESTDATA_FOLDER + File.separator
 			+ "Dishant_Mobifin_5.0_BusinessAndCRUDData.xls";
-	public static  String OPERATORCONFIG_FILE_PATH = TESTDATA_FOLDER + File.separator
+	public static String OPERATORCONFIG_FILE_PATH = TESTDATA_FOLDER + File.separator
 			+ "Dishant_Mobifin_5.0_BusinessAndCRUDData.xls";
-	public static  String BUSINESSCONFIG_FILE_PATH = TESTDATA_FOLDER + File.separator
+	public static String BUSINESSCONFIG_FILE_PATH = TESTDATA_FOLDER + File.separator
 			+ "Dishant_Mobifin_5.0_BusinessAndCRUDData.xls";
 }
