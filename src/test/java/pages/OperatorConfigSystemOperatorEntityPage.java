@@ -1,5 +1,6 @@
 package pages;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -79,6 +80,7 @@ public class OperatorConfigSystemOperatorEntityPage extends SetupInit {
 			+ Utility.readJSFile("INPUT_PARAMETER_ADD_CHILDFIELDEDITABLE", CommonConstants.ELEMENT_FILE)
 			+ "')])[last()]");
 	By accessChannelBtn = By.xpath("//*[normalize-space(text())='Access Channel']");
+	String removeAccessChannel = "(//*[normalize-space(text())='%s']//ancestor::div[contains(@class,'ant-row ant-form-item')]//parent::td//following-sibling::td//button[contains(@class,'delete')])[last()]";
 
 	public OperatorConfigSystemOperatorEntityPage(WebDriver driver) {
 		this.driver = driver;
@@ -131,7 +133,7 @@ public class OperatorConfigSystemOperatorEntityPage extends SetupInit {
 	}
 
 	public void selectStatus(String status) {
-		clickOnElement(By.xpath(String.format(statusField, status)), 0);
+		clickOnElement(By.xpath(String.format(statusField, status)), 1);
 	}
 
 	public void selectIsMandatory(String isMandatory) {
@@ -149,11 +151,15 @@ public class OperatorConfigSystemOperatorEntityPage extends SetupInit {
 	}
 
 	public void selectStatusInFilterSearch(String status) {
-		selectFromDropDown(drpStatusInSearch, By.xpath(String.format(dropStatusValue, status)));
+		selectFromDropDown(drpStatusInSearch, By.xpath(String.format(dropStatusValue, status)), 1);
 	}
 
 	public void clickOnAddField() {
-		clickOnElement(btnAddKYCLevel);
+		clickOnElement(btnAddKYCLevel, 0);
+	}
+
+	public void removeAccessChannel(String accessChannel) {
+		clickOnElement(By.xpath(String.format(removeAccessChannel, accessChannel.trim())), 0);
 	}
 
 	public void filterSearch(String sysOperEntityname, String status, boolean isSubString) {
@@ -223,6 +229,101 @@ public class OperatorConfigSystemOperatorEntityPage extends SetupInit {
 			else
 				verifyVisible(By.xpath(String.format(danger, String.valueOf(m + 1))), 0);
 		}
-		verifyVisible(By.xpath(String.format(status, map.get(mapKeys.get(13)).toString())), 0);
+		verifyVisible(By.xpath(String.format(status, map.get(mapKeys.get(13)).toString())));
+	}
+
+	public boolean editSystemOperatorEntity(Map<Object, Object> map, List<Object> mapKeys) {
+		filterSearch(map.get(mapKeys.get(1)).toString(), map.get(mapKeys.get(13)).toString(), true);
+		if (verifyVisible(By.xpath(String.format(verifyElement, map.get(mapKeys.get(1)).toString())), 5)) {
+			common.clickOnInfoBtn(map.get(mapKeys.get(1)).toString());
+			common.clickOnEditBtn();
+			sendTextInDescriptionInEdit(map.get(mapKeys.get(2)).toString());
+			selectUserCategory(map.get(mapKeys.get(3)).toString());
+			selectBusinessZone(map.get(mapKeys.get(4)).toString());
+			selectKYC(map.get(mapKeys.get(5)).toString());
+			selectKYCLevel(map.get(mapKeys.get(6)).toString());
+			selectRole(map.get(mapKeys.get(7)).toString());
+			selectTimeZone(map.get(mapKeys.get(8)).toString());
+			if (!map.get(mapKeys.get(15)).toString().isEmpty()) {
+				String[] removeAccessChannels = map.get(mapKeys.get(15)).toString().split(",");
+				for (int i = 0; i < removeAccessChannels.length; i++)
+					removeAccessChannel(removeAccessChannels[i]);
+			}
+			int rows = Integer.parseInt(map.get(mapKeys.get(9)).toString());
+			String[] accessChannelList = map.get(mapKeys.get(10)).toString().split(";");
+			for (int m = 0; m < rows; m++) {
+				clickOnAddField();
+				selectAccessChannel(accessChannelList[m].trim());
+				String[] allowedAPIList = map.get(mapKeys.get(11)).toString().split(";");
+				String[] twofactor = map.get(mapKeys.get(12)).toString().split(";");
+				String[] levelfield = allowedAPIList[m].split(",");
+				for (int j = 0; j < levelfield.length; j++)
+					sendTextInAllowedAPI(levelfield[j].trim());
+				selectIsMandatory(twofactor[m].trim());
+			}
+			selectStatus(map.get(mapKeys.get(14)).toString());
+			common.clickOnSaveBtn();
+			return true;
+		} else
+			return false;
+	}
+
+	public void verifyEditedSystemOperatorEntity(Map<Object, Object> map, List<Object> mapKeys) {
+		filterSearch(map.get(mapKeys.get(1)).toString(), map.get(mapKeys.get(14)).toString(), true);
+		verifyVisible(By.xpath(String.format(verifyElement, map.get(mapKeys.get(1)).toString())), 0);
+		common.clickOnInfoBtn(map.get(mapKeys.get(1)).toString());
+		verifyVisible(By.xpath(String.format(description, map.get(mapKeys.get(2)).toString())), 0);
+		verifyVisible(By.xpath(String.format(userCategory, map.get(mapKeys.get(3)).toString())), 0);
+		verifyVisible(By.xpath(String.format(businessZone, map.get(mapKeys.get(4)).toString())), 0);
+		verifyVisible(By.xpath(String.format(kycLevel, map.get(mapKeys.get(6)).toString())), 0);
+		verifyVisible(By.xpath(String.format(role, map.get(mapKeys.get(7)).toString())), 0);
+		verifyVisible(By.xpath(String.format(timeZone, map.get(mapKeys.get(8)).toString())), 0);
+		int rows = Integer.parseInt(map.get(mapKeys.get(9)).toString());
+		String[] accessChannelList = map.get(mapKeys.get(10)).toString().split(";");
+		for (int m = 0; m < rows; m++) {
+			verifyVisible(By.xpath(String.format(accessChannel, String.valueOf(m + 1), accessChannelList[m])), 0);
+			String[] allowedAPIList = map.get(mapKeys.get(11)).toString().split(";");
+			String[] twofactor = map.get(mapKeys.get(12)).toString().split(";");
+			String[] levelfield = allowedAPIList[m].split(",");
+			for (int j = 0; j < levelfield.length; j++)
+				verifyVisible(By.xpath(String.format(levelField, String.valueOf(m + 1), levelfield[j])), 0);
+			if (twofactor[m].equalsIgnoreCase(IsYes))
+				verifyVisible(By.xpath(String.format(success, String.valueOf(m + 1))), 0);
+			else
+				verifyVisible(By.xpath(String.format(danger, String.valueOf(m + 1))), 0);
+		}
+		verifyVisible(By.xpath(String.format(status, map.get(mapKeys.get(14)).toString())));
+	}
+
+	public boolean deleteSystemOperatorEntity(Map<Object, Object> map, List<Object> mapKeys) {
+		filterSearch(map.get(mapKeys.get(1)).toString(), map.get(mapKeys.get(2)).toString(), true);
+		if (verifyVisible(By.xpath(String.format(verifyElement, map.get(mapKeys.get(1)).toString())), 5)) {
+			common.clickOnInfoBtn(map.get(mapKeys.get(1)).toString());
+			common.delete();
+			return true;
+		} else {
+			String string = "Record already deleted";
+			log("</br><b style='color:#02563d'>" + string + "</b>");
+			return false;
+		}
+	}
+
+	public boolean verifyDeletedSystemOperatorEntity(Map<Object, Object> map, List<Object> mapKeys) {
+		filterSearch(map.get(mapKeys.get(1)).toString(), map.get(mapKeys.get(2)).toString(), true);
+		return verifyVisible(By.xpath(String.format(verifyElement, map.get(mapKeys.get(1)).toString())), 5);
+	}
+
+	public boolean sortSystemOperatorEntity(Map<Object, Object> map, List<Object> mapKeys) {
+		Map<String, List<String>> getBeforeSortTableData = common.getTableData(map.get(mapKeys.get(2)).toString());
+		common.clickOnSortBtn(map.get(mapKeys.get(0)).toString(), map.get(mapKeys.get(1)).toString());
+		List<String> sortedUIColumnData = common.getColumnData(map.get(mapKeys.get(0)).toString());
+		List<String> sortedUIColumnDataCopy = new ArrayList<>(sortedUIColumnData);
+		common.sortColumn(sortedUIColumnData, map.get(mapKeys.get(1)).toString());
+		if (!Utility.compareTwoLists(sortedUIColumnData, sortedUIColumnDataCopy))
+			return false;
+		Map<String, List<String>> getAfterSortTableData = common.getTableData(map.get(mapKeys.get(2)).toString());
+		if (!getBeforeSortTableData.equals(getAfterSortTableData))
+			return false;
+		return true;
 	}
 }

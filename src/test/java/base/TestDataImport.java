@@ -94,10 +94,35 @@ public class TestDataImport extends SetupInit {
 	public static Object[][] SystemOperatorOnboarding_Add() {
 		return readExcelFileTo2D(OPERATORCONFIG_FILE_PATH, "SystemOperatorOnboarding_Add");
 	}
-	
+
 	@DataProvider(name = "OperatingEntity_Add")
 	public static Object[][] OperatingEntity_Add() {
 		return readExcelFileTo2D(BUSINESSCONFIG_FILE_PATH, "OperatingEntity_Add");
+	}
+
+	@DataProvider(name = "OperatingEntityTemplate_Add")
+	public static Object[][] OperatingEntityTemplate_Add() {
+		return readExcelFileTo2D(BUSINESSCONFIG_FILE_PATH, "OperatingEntityTemplate_Add");
+	}
+
+	@DataProvider(name = "BusinessZone_Add")
+	public static Object[][] BusinessZone_Add() {
+		return readExcelFileTo2D(BUSINESSCONFIG_FILE_PATH, "BusinessZone_Add");
+	}
+
+	@DataProvider(name = "SystemOperatorEntity_Edit")
+	public static Object[][] SystemOperatorEntity_Edit() {
+		return readExcelFileTo2D(OPERATORCONFIG_FILE_PATH, "SystemOperatorEntity_Edit");
+	}
+
+	@DataProvider(name = "SystemOperatorEntity_Delete")
+	public static Object[][] SystemOperatorEntity_Delete() {
+		return readExcelFileTo2D(OPERATORCONFIG_FILE_PATH, "SystemOperatorEntity_Delete");
+	}
+
+	@DataProvider(name = "SystemOperatorEntity_Sort")
+	public static Object[][] SystemOperatorEntity_Sort() {
+		return readExcelFileTo2D(PLATEFORMCONFIGURATION_FILE_PATH, "SystemOperatorEntity_Sort");
 	}
 	
 	@DataProvider(name = "Parameter_Edit")

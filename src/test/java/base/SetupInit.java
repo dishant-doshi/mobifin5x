@@ -778,6 +778,21 @@ public class SetupInit extends CommonConstants {
 						driver.close();
 				}
 			}
+		}
+		if (isLoderDisplayed(By.xpath("//div[contains(text(),'Loading')]"))) {
+			Instant currentTime = getCurrentTime();
+			while (isLoderDisplayed(By.xpath("//div[contains(text(),'Loading')]"))) {
+				Instant loopingTime = getCurrentTime();
+				Duration timeElapsed = Duration.between(currentTime, loopingTime);
+				long sec = timeElapsed.toMillis() / 1000;
+				int durDiff = (int) sec;
+				if (durDiff >= 180) {
+					reloadCurrentPage();
+					reloadCounter++;
+					if (reloadCounter == 6)
+						driver.close();
+				}
+			}
 			pauseInMilliSeconds(400);
 		}
 		return true;

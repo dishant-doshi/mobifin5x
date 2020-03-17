@@ -1,7 +1,17 @@
 package pages;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 import base.CommonConstants;
 import base.SetupInit;
@@ -23,6 +33,40 @@ public class CommonPage extends SetupInit {
 	By btnClose = By.xpath("//button[@aria-label='Close']");
 	By btnEdit = By.id(Utility.readJSFile("OPERATIONBAR_BUTTON_EDIT", CommonConstants.ELEMENT_FILE));
 	By btnDelete = By.id(Utility.readJSFile("OPERATIONBAR_BUTTON_DELETE", CommonConstants.ELEMENT_FILE));
+	By btnEdit = By.id(Utility.readJSFile("OPERATIONBAR_BUTTON_EDIT", CommonConstants.ELEMENT_FILE));
+	By btnDelete = By.id(Utility.readJSFile("OPERATIONBAR_BUTTON_DELETE", CommonConstants.ELEMENT_FILE));
+	By btnGridAdd = By.id("operationbarbuttongridsetting");
+	By gridValues = By.xpath(
+			"//*[contains(@class,'ant-select-dropdown ant-select-dropdown--multiple')]//li[@aria-selected='false']");
+	By gridSetting = By.xpath("//*[contains(@class,'ant-select-search__field__wrap')]");
+	By gridLabelValues = By.xpath("//*[contains(@role,'listbox')]//li");
+	By gridHeaders = By.xpath("//thead//th//span//span");
+	String sorting = "//thead//*[normalize-space(text())='%s']";
+	String sortingOrder = "//thead//*[normalize-space(text())='%s']//ancestor::div[contains(@class,'sorter')]//i[contains(@class,'up off')]";
+	By rows = By.xpath("//tbody//tr");
+	String tableColumn = "//tbody//tr[%s]//td[contains(@class,'sorters')]";
+	String uniqueColumn = "//tbody//tr[%s]//td[3]";
+	By columnList = By.xpath("//tbody//td[3]");
+
+	Comparator<Entry<String, Integer>> descComparator = new Comparator<Entry<String, Integer>>() {
+		@Override
+		public int compare(Entry<String, Integer> a, Entry<String, Integer> b) {
+			int compareWordCount = a.getValue().compareTo(b.getValue());
+			if (compareWordCount == 0)
+				return b.getKey().compareToIgnoreCase(a.getKey());
+			return compareWordCount;
+		}
+	};
+
+	Comparator<Entry<String, Integer>> ascComparator = new Comparator<Entry<String, Integer>>() {
+		@Override
+		public int compare(Entry<String, Integer> a, Entry<String, Integer> b) {
+			int compareWordCount = a.getValue().compareTo(b.getValue());
+			if (compareWordCount == 0)
+				return a.getKey().compareToIgnoreCase(b.getKey());
+			return compareWordCount;
+		}
+	};
 
 	public CommonPage(WebDriver driver) {
 		this.driver = driver;
@@ -53,8 +97,8 @@ public class CommonPage extends SetupInit {
 		clickOnElement(btnSave, 0);
 	}
 
-	public boolean isStriptTextDisplayed() {
-		if (verifyVisible(stripText)) {
+	public boolean isStriptTextDisplayed(int... time) {
+		if (verifyVisible(stripText, time)) {
 			String text;
 			try {
 				text = "Strip Confirmation Message : " + getElementText(stripText);
@@ -107,5 +151,99 @@ public class CommonPage extends SetupInit {
 
 	public void clickOnDeleteBtn() {
 		clickOnElement(btnDelete, 0);
+	}
+	public List<String> addColumnInGrid() {
+		String value = null;
+		clickOnGridAddBtn();
+		clickOnElement(gridSetting);
+		List<WebElement> list = getElementList(gridValues);
+		List<String> gridValues = new ArrayList<String>();
+		for (int i = 0; i < list.size(); i++) {
+			list.get(i).click();
+			value = list.get(i).getAttribute("value");
+			value = "<b><span style='color:#3f0713'>" + value + "</span></b>";
+			log("Clicked on " + value);
+		}
+		List<WebElement> labelText = getElementList(gridLabelValues);
+		for (int i = 0; i < labelText.size(); i++)
+			gridValues.add(getElementText(labelText.get(i), 3).trim());
+		clickOnGridAddBtn();
+		return gridValues;
+	}
+
+	public boolean verifyColumnInGrid(List<String> list) {
+		List<WebElement> listHeaders = getElementList(gridHeaders);
+		List<String> gridHeaderValues = new ArrayList<String>();
+		for (int i = 0; i < listHeaders.size(); i++) {
+			gridHeaderValues.add(getElementText(listHeaders.get(i), 3));
+		}
+		gridHeaderValues.remove(0);
+		gridHeaderValues.remove(0);
+		for (int i = 0; i < list.size(); i++) {
+			if (!gridHeaderValues.contains(list.get(i)))
+				return false;
+		}
+		return true;
+	}
+
+	public void clickOnSortBtn(String columnName, String order) {
+		clickOnElement(By.xpath(String.format(sorting, columnName)), 0);
+		if (order.equalsIgnoreCase("ASC")) {
+			if (verifyVisible(By.xpath(String.format(sortingOrder, columnName)), 5))
+				clickOnElement(By.xpath(String.format(sorting, columnName)), 0);
+		} else {
+			if (verifyVisible(By.xpath(String.format(sortingOrder, columnName)), 5))
+				clickOnElement(By.xpath(String.format(sorting, columnName)), 0);
+		}
+	}
+
+	public Map<String, List<String>> getTableData(String uniqueColumnName) {
+		List<WebElement> tableRows = getElementList(rows);
+		List<String> list;
+		Map<String, List<String>> map = new LinkedHashMap<String, List<String>>();
+		for (int i = 1; i <= tableRows.size(); i++) {
+			list = new ArrayList<String>();
+			List<WebElement> tableCols = getElementList(By.xpath(String.format(tableColumn, i)), 0);
+			for (int j = 0; j < tableCols.size(); j++)
+				list.add(tableCols.get(j).getText());
+			map.put(getElementText(By.xpath(String.format(uniqueColumn, i)), 3), list);
+		}
+		return map;
+	}
+
+	public void sortColumn(List<String> list, String order) {
+		if (order.equalsIgnoreCase("Desc")) {
+			Map<String, Integer> map = new HashMap<>();
+			for (int i = 0; i < list.size(); i++) {
+				String word = list.get(i);
+				if (map.containsKey(word)) {
+					map.put(word, map.get(word) + 1);
+				} else {
+					map.put(word, 1);
+				}
+			}
+			List<Entry<String, Integer>> entries = new ArrayList<>(map.entrySet());
+			Collections.sort(entries, descComparator);
+		} else {
+			Map<String, Integer> map = new HashMap<>();
+			for (int i = 0; i < list.size(); i++) {
+				String word = list.get(i);
+				if (map.containsKey(word)) {
+					map.put(word, map.get(word) + 1);
+				} else {
+					map.put(word, 1);
+				}
+			}
+			List<Entry<String, Integer>> entries = new ArrayList<>(map.entrySet());
+			Collections.sort(entries, ascComparator);
+		}
+	}
+
+	public List<String> getColumnData(String string) {
+		List<String> columnData = new ArrayList<String>();
+		List<WebElement> columns = getElementList(columnList);
+		for (int i = 0; i < columns.size(); i++)
+			columnData.add(columns.get(i).getText().toString());
+		return columnData;
 	}
 }

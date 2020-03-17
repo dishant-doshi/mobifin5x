@@ -48,14 +48,15 @@ public class BusinessConfigurationOperatingEntityPage extends SetupInit {
 	By drpOperatingEntity = By.xpath("(//*[normalize-space(text())='Select']//parent::button)[last()]");
 	By drpViewOrEditDetail = By.xpath("(//*[contains(@class,'dropdown-trigger')])[last()]");
 	By drpViewDetailValue = By
-			.xpath("(//li[normalize-space(text())='" + ScriptConstants.BUSINESSZONE_VIEW + "'])[last()]");
+			.xpath("(//li[normalize-space(text())='" + ScriptConstants.BUSINESS_ZONE_VIEW + "'])[last()]");
 	String btnDelete = "//*[normalize-space(text())='%s']//ancestor::div[contains(@class,'template')]//div[contains(@class,'action-button')]//button[2]";
 	By calendar = By.xpath("//*[@class='ant-calendar-input ']");
 	By calendarOk = By.xpath("//*[@class='ant-calendar-ok-btn']");
-	String operationEntityTemplate = "//*[text()='%s']";
+	String verify = "//*[text()='%s']";
 	By horizontalBar = By.xpath("//div[contains(@class,'ant-steps-horizontal')]");
 	// By multipleField = By.xpath("//*[@class='ant-steps ant-steps-horizontal
 	// ant-steps-label-horizontal']");
+	// String verify = "//*[text()='%s']";
 
 	public BusinessConfigurationOperatingEntityPage(WebDriver driver) {
 		this.driver = driver;
@@ -132,12 +133,12 @@ public class BusinessConfigurationOperatingEntityPage extends SetupInit {
 	}
 
 	public void clickOnViewDetail() {
-		selectFromDropDown(drpViewOrEditDetail, By.xpath(String.format(drpValues, ScriptConstants.BUSINESSZONE_VIEW)),
+		selectFromDropDown(drpViewOrEditDetail, By.xpath(String.format(drpValues, ScriptConstants.BUSINESS_ZONE_VIEW)),
 				0);
 	}
 
 	public void clickOnEditDetail() {
-		selectFromDropDown(drpViewOrEditDetail, By.xpath(String.format(drpValues, ScriptConstants.BUSINESSZONE_EDIT)),
+		selectFromDropDown(drpViewOrEditDetail, By.xpath(String.format(drpValues, ScriptConstants.BUSINESS_ZONE_EDIT)),
 				0);
 	}
 
@@ -156,7 +157,7 @@ public class BusinessConfigurationOperatingEntityPage extends SetupInit {
 		filterSearch(map.get(mapKeys.get(1)).toString());
 		pauseInSeconds(2);
 		clickOnOperatingEntityAddIcon(map.get(mapKeys.get(2)).toString());
-		pauseInSeconds(2);
+		pauseInSeconds(5);
 		selectOperatingEntityOnboarding();
 		pauseInSeconds(2);
 		selectOperatingEntityTemplate(map.get(mapKeys.get(1)).toString());
@@ -283,7 +284,16 @@ public class BusinessConfigurationOperatingEntityPage extends SetupInit {
 		} else
 			log("<b style='color:#02563d'>User successfuly added.</b>");
 		filterSearch(map.get(mapKeys.get(7)).toString().split(":")[1]);
-		verifyVisible(
-				By.xpath(String.format(operationEntityTemplate, map.get(mapKeys.get(7)).toString().split(":")[1])), 0);
+		verifyVisible(By.xpath(String.format(verify, map.get(mapKeys.get(7)).toString().split(":")[1])), 0);
+	}
+
+	public void editOperatingEntity(Map<Object, Object> map, List<Object> mapKeys) {
+		filterSearch(map.get(mapKeys.get(1)).toString());
+		if (veifyElementIsNotVisible(By.xpath("//*[text()='" + map.get(mapKeys.get(1)).toString() + "']"))) {
+			clickOnEditDetail();
+			if (!map.get(mapKeys.get(3)).toString().isEmpty())
+				sendTextInDescriptionInEdit(map.get(mapKeys.get(3)).toString());
+			clickOnElement(btnSave);
+		}
 	}
 }
