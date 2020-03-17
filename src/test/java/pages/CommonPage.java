@@ -33,8 +33,6 @@ public class CommonPage extends SetupInit {
 	By btnClose = By.xpath("//button[@aria-label='Close']");
 	By btnEdit = By.id(Utility.readJSFile("OPERATIONBAR_BUTTON_EDIT", CommonConstants.ELEMENT_FILE));
 	By btnDelete = By.id(Utility.readJSFile("OPERATIONBAR_BUTTON_DELETE", CommonConstants.ELEMENT_FILE));
-	By btnEdit = By.id(Utility.readJSFile("OPERATIONBAR_BUTTON_EDIT", CommonConstants.ELEMENT_FILE));
-	By btnDelete = By.id(Utility.readJSFile("OPERATIONBAR_BUTTON_DELETE", CommonConstants.ELEMENT_FILE));
 	By btnGridAdd = By.id("operationbarbuttongridsetting");
 	By gridValues = By.xpath(
 			"//*[contains(@class,'ant-select-dropdown ant-select-dropdown--multiple')]//li[@aria-selected='false']");
@@ -135,23 +133,23 @@ public class CommonPage extends SetupInit {
 		clickOnElement(btnClose);
 	}
 
-	public void clickOnEditButton() {
-		clickOnElement(btnEdit, 0);
+	public void clickOnEditBtn() {
+		clickOnElement(btnEdit);
 	}
 
-	public boolean verifyFilterBtn() {
-		return verifyVisible(btnFilter);
+	public void clickOnDeleteBtn() {
+		clickOnElement(btnDelete);
 	}
 
 	public void delete() {
 		clickOnDeleteBtn();
 		clickOnDeleteConfirm();
-		isStriptTextDisplayed();
 	}
 
-	public void clickOnDeleteBtn() {
-		clickOnElement(btnDelete, 0);
+	public void clickOnGridAddBtn() {
+		clickOnElement(btnGridAdd);
 	}
+
 	public List<String> addColumnInGrid() {
 		String value = null;
 		clickOnGridAddBtn();
@@ -245,5 +243,8 @@ public class CommonPage extends SetupInit {
 		for (int i = 0; i < columns.size(); i++)
 			columnData.add(columns.get(i).getText().toString());
 		return columnData;
+	}
+	public void clickOnEditButton() {
+		clickOnElement(btnEdit, 0);
 	}
 }

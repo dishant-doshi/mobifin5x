@@ -86,5 +86,12 @@ public class ScriptConstants {
 	public static final String REGIONALENTITY_OK = "Ok";
 	public static final String ADD_OPERATING_ENTITY_TEMPLATE = "Add Operating Entity Template";
 	public static final String ADD_OPERATINGENTITY_ONBOARDING = "Add Operating Entity Onboarding";
+	public static final String EQUEALS = "Equals";
+	public static final String KYC_KYCLEVEL_BUTTON = "Add KYC Level";
+	public static final String KYC_ADDFIELD = "Add Field";
+	public static final String KYC_OK = "OK";
+	public static final String USERCATEGORY_IDENTIFIERBUTTON = "Add Identifier Field";
+	public static final String UNIT_STATUS = "Status";
+	public static final String UNIT_UNITTYPE = "Unit Type";
 }
 
