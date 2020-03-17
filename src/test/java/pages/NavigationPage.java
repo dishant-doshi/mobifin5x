@@ -81,4 +81,23 @@ public class NavigationPage extends SetupInit {
 		clickOnElement(userManagement, 0);
 		clickOnElement(viewUser, 0);
 	}
+
+	public void clickOnPlateformConfigurationKYC() {
+		clickOnElement(platformConfiguration, 0);
+		clickOnElement(KYC, 0);
+	}
+
+	public void clickOnPlateformConfigurationUserCategory() {
+		clickOnElement(platformConfiguration, 0);
+		clickOnElement(userCategory, 0);
+	}
+
+	public void clickOnPlateformConfigurationUnit() {
+		clickOnElement(platformConfiguration, 0);
+		clickOnElement(unit, 0);
+	}
+	public void clickOnPlateformConfigurationRule() {
+		clickOnElement(platformConfiguration, 0);
+		clickOnElement(rule, 0);
+	}
 }

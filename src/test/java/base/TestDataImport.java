@@ -99,4 +99,54 @@ public class TestDataImport extends SetupInit {
 	public static Object[][] OperatingEntity_Add() {
 		return readExcelFileTo2D(BUSINESSCONFIG_FILE_PATH, "OperatingEntity_Add");
 	}
+	
+	@DataProvider(name = "Parameter_Edit")
+	public static Object[][] Parameter_Edit() {
+		return readExcelFileTo2D(PLATEFORMCONFIGURATION_FILE_PATH, "Parameter_Edit");
+	}
+	
+	@DataProvider(name = "Parameter_Delete")
+	public static Object[][] Parameter_Delete() {
+		return readExcelFileTo2D(PLATEFORMCONFIGURATION_FILE_PATH, "Parameter_Delete");
+	}
+
+	@DataProvider(name = "KYC_Add")
+	public static Object[][] KYC_Add() {
+		return readExcelFileTo2D(PLATEFORMCONFIGURATION_FILE_PATH, "KYC_Add");
+	}
+	
+	@DataProvider(name = "KYC_Edit")
+	public static Object[][] KYC_Edit() {
+		return readExcelFileTo2D(PLATEFORMCONFIGURATION_FILE_PATH, "KYC_Edit");
+	}
+	@DataProvider(name = "KYC_Delete")
+	public static Object[][] KYC_Delete() {
+		return readExcelFileTo2D(PLATEFORMCONFIGURATION_FILE_PATH, "KYC_Delete");
+	}
+	@DataProvider(name = "UserCategory_Add")
+	public static Object[][] UserCategory_Add() {
+		return readExcelFileTo2D(PLATEFORMCONFIGURATION_FILE_PATH, "UserCategory_Add");
+	}
+	
+	@DataProvider(name = "UserCategory_Edit")
+	public static Object[][] UserCategory_Edit() {
+		return readExcelFileTo2D(PLATEFORMCONFIGURATION_FILE_PATH, "UserCategory_Edit");
+	}
+	@DataProvider(name = "UserCategory_Delete")
+	public static Object[][] UserCategory_Delete() {
+		return readExcelFileTo2D(PLATEFORMCONFIGURATION_FILE_PATH, "UserCategory_Delete");
+	}
+	@DataProvider(name = "Unit_Add")
+	public static Object[][] Unit_Add() {
+		return readExcelFileTo2D(PLATEFORMCONFIGURATION_FILE_PATH, "Unit_Add");
+	}
+	
+	@DataProvider(name = "Unit_Edit")
+	public static Object[][] Unit_Edit() {
+		return readExcelFileTo2D(PLATEFORMCONFIGURATION_FILE_PATH, "Unit_Edit");
+	}
+	@DataProvider(name = "Unit_Delete")
+	public static Object[][] Unit_Delete() {
+		return readExcelFileTo2D(PLATEFORMCONFIGURATION_FILE_PATH, "Unit_Delete");
+	}
 }

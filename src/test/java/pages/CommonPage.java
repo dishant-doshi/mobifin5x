@@ -21,6 +21,8 @@ public class CommonPage extends SetupInit {
 	By btnNext = By.xpath("//span[normalize-space(text())='Next']//parent::button");
 	By btnDeleteConfirm = By.xpath("(//*[@class='ant-btn ant-btn-primary'])[last()]");
 	By btnClose = By.xpath("//button[@aria-label='Close']");
+	By btnEdit = By.id(Utility.readJSFile("OPERATIONBAR_BUTTON_EDIT", CommonConstants.ELEMENT_FILE));
+	By btnDelete = By.id(Utility.readJSFile("OPERATIONBAR_BUTTON_DELETE", CommonConstants.ELEMENT_FILE));
 
 	public CommonPage(WebDriver driver) {
 		this.driver = driver;
@@ -87,5 +89,23 @@ public class CommonPage extends SetupInit {
 
 	public void clickOnCloseBtn() {
 		clickOnElement(btnClose);
+	}
+
+	public void clickOnEditButton() {
+		clickOnElement(btnEdit, 0);
+	}
+
+	public boolean verifyFilterBtn() {
+		return verifyVisible(btnFilter);
+	}
+
+	public void delete() {
+		clickOnDeleteBtn();
+		clickOnDeleteConfirm();
+		isStriptTextDisplayed();
+	}
+
+	public void clickOnDeleteBtn() {
+		clickOnElement(btnDelete, 0);
 	}
 }

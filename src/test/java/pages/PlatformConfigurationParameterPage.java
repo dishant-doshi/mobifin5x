@@ -1,8 +1,10 @@
 package pages;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.elasticsearch.index.store.VerifyingIndexOutput;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
@@ -54,14 +56,14 @@ public class PlatformConfigurationParameterPage extends SetupInit {
 	By drpUsedByInSearch = By.xpath(
 			"//*[normalize-space(text())='Used By']//ancestor :: div[@class='ant-form-item-label']//following-sibling :: div//ancestor :: span[@class='ant-select-arrow']");
 	By drpValueSource = By.xpath("//*[@id='inputParameterAddValueSource']//*[@class='ant-select-arrow']");
+	By drpValueSourceInEdit = By.xpath("//*[@id='inputParameterEditValueSource']//*[@class='ant-select-arrow']");
 	String dropDownValue = "//li[normalize-space(text())='%s']";
 	String dropDownFieldValue = "//*[normalize-space(text())='%s']";
 	String verifyElement = "(//td[text()='%s'])[1]";
-	By drpStatus = By.xpath("//*[@id='" + Utility.readJSFile("INPUT_PARAMETER_ADD_STATUS", CommonConstants.ELEMENT_FILE)
-			+ "']//span[normalize-space(text())='%s']");
-	By drpStatusEdit = By
-			.xpath("//*[@id='" + Utility.readJSFile("INPUT_PARAMETER_EDIT_STATUS", CommonConstants.ELEMENT_FILE)
-					+ "']//span[normalize-space(text())='%s']");
+	String drpStatus = "//*[@id='" + Utility.readJSFile("INPUT_PARAMETER_ADD_STATUS", CommonConstants.ELEMENT_FILE)
+			+ "']//span[normalize-space(text())='%s']";
+	String drpStatusEdit = "//*[@id='" + Utility.readJSFile("INPUT_PARAMETER_EDIT_STATUS", CommonConstants.ELEMENT_FILE)
+			+ "']//span[normalize-space(text())='%s']";
 	By isMandatoryBtn = By.xpath("(//*[contains(@id,'"
 			+ Utility.readJSFile("INPUT_PARAMETER_ADD_CHILDFIELDMANDATORY", CommonConstants.ELEMENT_FILE)
 			+ "')])[last()]");
@@ -99,6 +101,8 @@ public class PlatformConfigurationParameterPage extends SetupInit {
 	String ValueSource = "//*[normalize-space(text()) = 'Value Source']//ancestor:: div[@class='ant-row ant-form-item']//*[normalize-space(text())='%s']";
 	String fieldName = "//*[normalize-space(text()) = '%s']";
 	private CommonPage common;
+	By possiblevalueInDropDown = By.xpath("(//*[@id='inputParameterAddPossiblevalue'])[last()]");
+	String removeField = "//*[normalize-space(text())='%s']//ancestor  :: div[@class='ant-row ant-form-item']//parent :: td//following-sibling :: td//*[contains(@class,'ant-btn deleteBtn')]";
 
 	public PlatformConfigurationParameterPage(WebDriver driver) {
 		this.driver = driver;
@@ -106,51 +110,51 @@ public class PlatformConfigurationParameterPage extends SetupInit {
 	}
 
 	public void sendTextInName(String name) {
-		sendKeys(txtName, name);
+		sendKeys(txtName, name, 0);
 	}
 
 	public void sendTextInDescription(String description) {
-		sendKeys(txtDescription, description);
+		sendKeys(txtDescription, description, 0);
 	}
 
 	public void sendTextInDescriptionInEdit(String description) {
-		sendKeys(txtDescriptionInEdit, description);
+		sendKeys(txtDescriptionInEdit, description, 0);
 	}
 
 	public void selectFieldType(String fieldType) {
-		selectFromDropDown(drpFieldType, By.xpath(String.format(dropDownFieldValue, fieldType)));
+		selectFromDropDown(drpFieldType, By.xpath(String.format(dropDownFieldValue, fieldType)), 0);
 	}
 
 	public void selectUsedBy(String usedBy) {
-		selectFromDropDown(drpUsedBy, By.xpath(String.format(dropDownValue, usedBy)));
+		selectFromDropDown(drpUsedBy, By.xpath(String.format(dropDownValue, usedBy)), 0);
 	}
 
 	public void selectComponentType(String componentType) {
-		selectFromDropDown(drpComponentType, By.xpath(String.format(dropDownValue, componentType)));
+		selectFromDropDown(drpComponentType, By.xpath(String.format(dropDownValue, componentType)), 0);
 	}
 
 	public void sendTextInPossibleValue(String possibleValue) {
-		sendKeys(txtPossibleValue, possibleValue);
+		sendKeys(txtPossibleValue, possibleValue, 0);
 	}
 
 	public void sendTextInPossibleValueInEdit(String possibleValue) {
-		sendKeys(txtPossibleValueInEdit, possibleValue);
+		sendKeys(txtPossibleValueInEdit, possibleValue, 0);
 	}
 
 	public void selectStatus(String status) {
-		clickOnElement(drpStatus);
+		clickOnElement(By.xpath(String.format(drpStatus, status)), 2);
 	}
 
 	public void selectStatusInEdit(String status) {
-		clickOnElement(drpStatusEdit);
+		clickOnElement(By.xpath(String.format(drpStatusEdit, status)),2);
 	}
 
 	public void selectDataType(String dataType) {
-		selectFromDropDown(drpDataType, By.xpath(String.format(dropDownValue, dataType)));
+		selectFromDropDown(drpDataType, By.xpath(String.format(dropDownValue, dataType)), 0);
 	}
 
 	public void selectDataTypeInEdit(String dataType) {
-		selectFromDropDown(drpDataTypeInEdit, By.xpath(String.format(dropDownValue, dataType)));
+		selectFromDropDown(drpDataTypeInEdit, By.xpath(String.format(dropDownValue, dataType)), 0);
 	}
 
 	public void sendTextInRegEx(String regEx) {
@@ -162,11 +166,11 @@ public class PlatformConfigurationParameterPage extends SetupInit {
 	}
 
 	public void sendTextInValidationMessage(String validationMessage) {
-		sendKeys(txtValidationMessage, validationMessage);
+		sendKeys(txtValidationMessage, validationMessage, 0);
 	}
 
 	public void sendTextInValidationMessageInEdit(String validationMessage) {
-		sendKeys(txtValidationMessageInEdit, validationMessage);
+		sendKeys(txtValidationMessageInEdit, validationMessage, 0);
 	}
 
 	public void selectFieldName(String fieldName) {
@@ -192,48 +196,53 @@ public class PlatformConfigurationParameterPage extends SetupInit {
 	}
 
 	public void selectChildField(String childField) {
-		clickOnElement(By.xpath("//*[normalize-space(text())='" + childField + "']"));
+		clickOnElement(By.xpath(String.format(fieldName, childField)));
 	}
 
 	public void selectStatusInFilterSearch(String status) {
-		clickOnElement(drpStatusInSearch);
-		clickOnElement(By.xpath("(//li[normalize-space(text())='" + status.trim() + "'])[last()]"));
+		selectFromDropDown(drpStatusInSearch, By.xpath(String.format(dropDownValue, status)), 2);
 	}
 
 	public void selectUsedByInFilterSearch(String usedBy) {
-		clickOnElement(drpUsedByInSearch);
-		clickOnElement(By.xpath("(//li[normalize-space(text())='" + usedBy.trim() + "'])[last()]"));
+		selectFromDropDown(drpUsedByInSearch, By.xpath(String.format(dropDownValue, usedBy)), 0);
 	}
 
 	public void clickOnChildText() {
-		clickOnElement(clickChildFieldText);
+		clickOnElement(clickChildFieldText, 0);
 	}
 
 	public void selectValueSource(String valueSource) {
-		clickOnElement(drpValueSource);
-		clickOnElement(By.xpath("(//*[normalize-space(text())='" + valueSource + "'])[last()]"));
+		selectFromDropDown(drpValueSource, By.xpath(String.format(dropDownValue, valueSource)), 0);
+	}
+
+	public void selectValueSourceInEdit(String valueSource) {
+		selectFromDropDown(drpValueSourceInEdit, By.xpath(String.format(dropDownValue, valueSource)), 0);
 	}
 
 	public void sendTextInPossibleValueInDropdown(String possibleValue) {
-		sendKeys(By.xpath("(//*[@id='inputParameterAddPossiblevalue'])[last()]"), possibleValue);
+		sendKeys(possiblevalueInDropDown, possibleValue);
 	}
 
-	public void filterSearch(String name, String status, String usedBy, boolean isSubString) {
+	public void sendTextInParameterNameFilterSearch(String name) {
+		sendKeys(txtNameInSearch, name, 0);
+	}
+
+	public void filterSearch(String parameterName, String status, String usedBy, boolean isSubString) {
 		common.commonFilterSearch();
 		if (isSubString) {
 			clickOnElement(filterDownArrow);
 			clickOnElement(filterBy);
 		}
-		sendKeys(txtNameInSearch, name);
-		selectFromDropDown(drpUsedByInSearch, By.xpath(String.format(dropDownValue, usedBy)));
-		selectFromDropDown(drpStatusInSearch, By.xpath(String.format(dropDownValue, status)));
+		sendTextInParameterNameFilterSearch(parameterName);
+		selectUsedByInFilterSearch(usedBy);
+		selectStatusInFilterSearch(status);
 		common.clickOnFilterSearchBtn();
 	}
 
 	public void addParameter(Map<Object, Object> map, List<Object> mapKeys) {
 		filterSearch(map.get(mapKeys.get(1)).toString(), map.get(mapKeys.get(14)).toString(),
 				map.get(mapKeys.get(15)).toString(), true);
-		if (veifyElementIsNotVisible(By.xpath(String.format(verifyElement, map.get(mapKeys.get(1)).toString())))) {
+		if (veifyElementIsNotVisible(By.xpath(String.format(verifyElement, map.get(mapKeys.get(1)).toString())), 5)) {
 			common.clickOnAddButton();
 			sendTextInName(map.get(mapKeys.get(1)).toString());
 			sendTextInDescription(map.get(mapKeys.get(2)).toString());
@@ -322,101 +331,243 @@ public class PlatformConfigurationParameterPage extends SetupInit {
 		}
 	}
 
-	public boolean verifyAddedParameter(Map<Object, Object> map, List<Object> mapKeys) {
+	public void verifyAddedParameter(Map<Object, Object> map, List<Object> mapKeys) {
 		filterSearch(map.get(mapKeys.get(1)).toString(), map.get(mapKeys.get(14)).toString(),
 				map.get(mapKeys.get(15)).toString(), true);
-		if (verifyVisible(By.xpath(String.format(verifyElement, map.get(mapKeys.get(1)).toString())))) {
-			common.clickOnInfoBtn(map.get(mapKeys.get(1)).toString());
-			if (verifyVisible(By.xpath(String.format(name, map.get(mapKeys.get(1)).toString()))))
-				return false;
-			if (verifyVisible(By.xpath(String.format(description, map.get(mapKeys.get(2)).toString()))))
-				return false;
-			if (verifyVisible(By.xpath(String.format(FieldType, map.get(mapKeys.get(3)).toString()))))
-				return false;
-			if (verifyVisible(By.xpath(String.format(usedBy, map.get(mapKeys.get(15)).toString()))))
-				return false;
-			if (map.get(mapKeys.get(3)).toString().toLowerCase().equals("base")) {
-				if (verifyVisible(
-						By.xpath(String.format(ComponentType, map.get(mapKeys.get(4)).toString()))))
-					return false;
-				switch (map.get(mapKeys.get(4)).toString().toLowerCase()) {
-				case "textbox":
-					if (verifyVisible(By.xpath(String.format(DataType, map.get(mapKeys.get(5)).toString()))))
-						return false;
-					if (!map.get(mapKeys.get(3)).toString().trim().equals(""))
-						if (verifyVisible(
-								By.xpath(String.format(RegEx, map.get(mapKeys.get(6)).toString()))))
-							return false;
-					if (verifyVisible(
-							By.xpath(String.format(ValidationMessage, map.get(mapKeys.get(7)).toString()))))
-						return false;
-					break;
-				case "dropdown":
-					if (verifyVisible(
-							By.xpath(String.format(ValueSource, map.get(mapKeys.get(16)).toString()))))
-						return false;
-					if (map.get(mapKeys.get(16)).toString().trim().toLowerCase().equals("parameter")) {
-						String[] fieldNameList = map.get(mapKeys.get(11)).toString().split(",");
-						for (int m = 0; m < fieldNameList.length; m++)
-							if (verifyVisible(By.xpath(String.format(fieldName, fieldNameList[m]))))
-								return false;
-					} else {
-						if (verifyVisible(
-								By.xpath(String.format(PossibleValue, map.get(mapKeys.get(9)).toString()))))
-							return false;
-					}
-					break;
-				case "checkbox":
-					if (verifyVisible(
-							By.xpath(String.format(ChildField, map.get(mapKeys.get(8)).toString()))))
-						return false;
-					break;
-				case "radiobutton":
-					if (verifyVisible(
-							By.xpath(String.format(ChildField, map.get(mapKeys.get(8)).toString()))))
-						return false;
-					break;
-				case "label":
-					if (verifyVisible(
-							By.xpath(String.format(PossibleValue, map.get(mapKeys.get(9)).toString()))))
-						return false;
-					break;
-				case "datepicker":
-					break;
-				case "fileselector":
-					if (!map.get(mapKeys.get(3)).toString().trim().equals(""))
-						if (verifyVisible(
-								By.xpath(String.format(RegEx, map.get(mapKeys.get(6)).toString()))))
-							return false;
-					if (verifyVisible(
-							By.xpath(String.format(ValidationMessage, map.get(mapKeys.get(7)).toString()))))
-						return false;
-					break;
-				case "hyperlink":
-					if (verifyVisible(
-							By.xpath(String.format(PossibleValue, map.get(mapKeys.get(9)).toString()))))
-						return false;
-					break;
-				case "password":
-					if (verifyVisible(By.xpath(String.format(DataType, map.get(mapKeys.get(5)).toString()))))
-						return false;
-					if (!map.get(mapKeys.get(3)).toString().trim().equals(""))
-						if (verifyVisible(
-								By.xpath(String.format(RegEx, map.get(mapKeys.get(6)).toString()))))
-							return false;
-					if (verifyVisible(
-							By.xpath(String.format(ValidationMessage, map.get(mapKeys.get(7)).toString()))))
-						return false;
-					break;
+		verifyVisible(By.xpath(String.format(verifyElement, map.get(mapKeys.get(1)).toString())), 5);
+		common.clickOnInfoBtn(map.get(mapKeys.get(1)).toString());
+		verifyVisible(By.xpath(String.format(name, map.get(mapKeys.get(1)).toString())), 0);
+		verifyVisible(By.xpath(String.format(description, map.get(mapKeys.get(2)).toString())), 0);
+		verifyVisible(By.xpath(String.format(FieldType, map.get(mapKeys.get(3)).toString())), 0);
+		verifyVisible(By.xpath(String.format(usedBy, map.get(mapKeys.get(15)).toString())), 0);
+		if (map.get(mapKeys.get(3)).toString().toLowerCase().equals("base")) {
+			verifyVisible(By.xpath(String.format(ComponentType, map.get(mapKeys.get(4)).toString())), 0);
+			switch (map.get(mapKeys.get(4)).toString().toLowerCase()) {
+			case "textbox":
+				verifyVisible(By.xpath(String.format(DataType, map.get(mapKeys.get(5)).toString())), 0);
+				if (!map.get(mapKeys.get(3)).toString().trim().equals(""))
+					verifyVisible(By.xpath(String.format(RegEx, map.get(mapKeys.get(6)).toString())), 0);
+				verifyVisible(By.xpath(String.format(ValidationMessage, map.get(mapKeys.get(7)).toString())), 0);
+				break;
+			case "dropdown":
+				verifyVisible(By.xpath(String.format(ValueSource, map.get(mapKeys.get(16)).toString())), 0);
+				if (map.get(mapKeys.get(16)).toString().trim().toLowerCase().equals("parameter")) {
+					String[] fieldNameList = map.get(mapKeys.get(11)).toString().split(",");
+					for (int m = 0; m < fieldNameList.length; m++)
+						verifyVisible(By.xpath(String.format(fieldName, fieldNameList[m])), 0);
+				} else {
+					verifyVisible(By.xpath(String.format(PossibleValue, map.get(mapKeys.get(9)).toString())), 0);
 				}
-			} else {
-				String[] fieldNameList = map.get(mapKeys.get(11)).toString().split(",");
-				for (int m = 0; m < fieldNameList.length; m++)
-					if (verifyVisible(By.xpath(String.format(fieldName, fieldNameList[m]))))
-						return false;
+				break;
+			case "checkbox":
+				verifyVisible(By.xpath(String.format(ChildField, map.get(mapKeys.get(8)).toString())), 0);
+				break;
+			case "radiobutton":
+				verifyVisible(By.xpath(String.format(ChildField, map.get(mapKeys.get(8)).toString())), 0);
+				break;
+			case "label":
+				verifyVisible(By.xpath(String.format(PossibleValue, map.get(mapKeys.get(9)).toString())), 0);
+				break;
+			case "datepicker":
+				break;
+			case "fileselector":
+				if (!map.get(mapKeys.get(3)).toString().trim().equals(""))
+					verifyVisible(By.xpath(String.format(RegEx, map.get(mapKeys.get(6)).toString())), 0);
+				verifyVisible(By.xpath(String.format(ValidationMessage, map.get(mapKeys.get(7)).toString())), 0);
+				break;
+			case "hyperlink":
+				verifyVisible(By.xpath(String.format(PossibleValue, map.get(mapKeys.get(9)).toString())), 0);
+				break;
+			case "password":
+				verifyVisible(By.xpath(String.format(DataType, map.get(mapKeys.get(5)).toString())), 0);
+				if (!map.get(mapKeys.get(3)).toString().trim().equals(""))
+					verifyVisible(By.xpath(String.format(RegEx, map.get(mapKeys.get(6)).toString())), 0);
+				verifyVisible(By.xpath(String.format(ValidationMessage, map.get(mapKeys.get(7)).toString())), 0);
+				break;
 			}
-			return true;
-		} else
-			return false;
+		} else {
+			String[] fieldNameList = map.get(mapKeys.get(11)).toString().split(",");
+			for (int m = 0; m < fieldNameList.length; m++)
+				verifyVisible(By.xpath(String.format(fieldName, fieldNameList[m])), 0);
+		}
 	}
+
+	public void editParameter(Map<Object, Object> map, List<Object> mapKeys) {
+		filterSearch(map.get(mapKeys.get(1)).toString(), map.get(mapKeys.get(15)).toString(),
+				map.get(mapKeys.get(16)).toString(), true);
+		verifyVisible(By.xpath(String.format(verifyElement, map.get(mapKeys.get(1)).toString())), 5);
+		common.clickOnInfoBtn(map.get(mapKeys.get(1)).toString());
+		common.clickOnEditButton();
+		pauseInSeconds(2);
+		sendTextInDescriptionInEdit(map.get(mapKeys.get(2)).toString());
+		if (map.get(mapKeys.get(3)).toString().toLowerCase().equals("base")) {
+			switch (map.get(mapKeys.get(4)).toString().toLowerCase()) {
+			case "textbox":
+				selectDataTypeInEdit(map.get(mapKeys.get(5)).toString());
+				if (!map.get(mapKeys.get(6)).toString().equals("")) {
+					sendTextInRegExInEdit(map.get(mapKeys.get(6)).toString());
+				}
+				sendTextInValidationMessageInEdit(map.get(mapKeys.get(7)).toString());
+				break;
+			case "dropdown":
+				if (!map.get(mapKeys.get(18)).toString().equals("")) {
+					selectValueSourceInEdit(map.get(mapKeys.get(18)).toString());
+				}
+				if (!map.get(mapKeys.get(10)).toString().equals("")) {
+					int rows = Integer.parseInt(map.get(mapKeys.get(10)).toString());
+					String[] removeFieldNameList = map.get(mapKeys.get(11)).toString().split(",");
+					String[] fieldNameList = map.get(mapKeys.get(12)).toString().split(",");
+					String[] ismandatory = map.get(mapKeys.get(13)).toString().split(",");
+					String[] isEditable = map.get(mapKeys.get(14)).toString().split(",");
+					if (!map.get(mapKeys.get(11)).toString().equals("")) {
+						for (int j = 0; j < removeFieldNameList.length; j++) {
+							clickOnElement(By.xpath(String.format(removeField, removeFieldNameList[j].trim())));
+						}
+					}
+					for (int m = 0; m < rows; m++) {
+						clickOnChildFieldAdd();
+						selectFieldName(fieldNameList[m].trim());
+						selectIsMandatory(ismandatory[m].trim());
+						selectIsEditable(isEditable[m].trim());
+					}
+				}
+				break;
+			case "checkbox":
+				String[] checkchildFieldList = map.get(mapKeys.get(8)).toString().split(",");
+				clickOnElement(drpChildFieldInEdit);
+				for (int i = 0; i < checkchildFieldList.length; i++) {
+					selectChildField(checkchildFieldList[i].trim());
+				}
+				break;
+			case "radiobutton":
+				String[] radioFieldList = map.get(mapKeys.get(8)).toString().split(",");
+				clickOnElement(drpChildFieldInEdit);
+				for (int i = 0; i < radioFieldList.length; i++) {
+					selectChildField(radioFieldList[i].trim());
+				}
+				break;
+			case "label":
+				sendTextInPossibleValueInEdit(map.get(mapKeys.get(9)).toString());
+				break;
+			case "datepicker":
+				break;
+			case "fileselector":
+				if (!map.get(mapKeys.get(6)).toString().equals("")) {
+					sendTextInRegExInEdit(map.get(mapKeys.get(6)).toString());
+				}
+				sendTextInValidationMessageInEdit(map.get(mapKeys.get(7)).toString());
+				break;
+			case "hyperlink":
+				sendTextInPossibleValueInEdit(map.get(mapKeys.get(9)).toString());
+				break;
+			case "password":
+				selectDataTypeInEdit(map.get(mapKeys.get(5)).toString());
+				if (!map.get(mapKeys.get(6)).toString().equals("")) {
+					sendTextInRegExInEdit(map.get(mapKeys.get(6)).toString());
+				}
+				sendTextInValidationMessageInEdit(map.get(mapKeys.get(7)).toString());
+				break;
+			}
+		} else {
+			int rows = Integer.parseInt(map.get(mapKeys.get(10)).toString());
+			String[] fieldNameList = map.get(mapKeys.get(11)).toString().split(",");
+			String[] ismandatory = map.get(mapKeys.get(12)).toString().split(",");
+			String[] isEditable = map.get(mapKeys.get(13)).toString().split(",");
+			for (int m = 0; m < rows; m++) {
+				selectFieldName(fieldNameList[m].trim());
+				if (m > 0) {
+					selectIsEditable(isEditable[m].trim());
+					selectIsMandatory(ismandatory[m].trim());
+				}
+				if (m < rows - 1) {
+					clickOnChildFieldAdd();
+				}
+			}
+		}
+		selectStatusInEdit(map.get(mapKeys.get(17)).toString());
+		common.clickOnSaveBtn();
+	}
+
+	public void verifyEditedParameter(Map<Object, Object> map, List<Object> mapKeys) {
+		filterSearch(map.get(mapKeys.get(1)).toString(), map.get(mapKeys.get(17)).toString(),
+				map.get(mapKeys.get(16)).toString(), true);
+		verifyVisible(By.xpath(String.format(verifyElement, map.get(mapKeys.get(1)).toString())), 0);
+		common.clickOnInfoBtn(map.get(mapKeys.get(1)).toString());
+		verifyVisible(By.xpath(String.format(description, map.get(mapKeys.get(2)).toString())), 0);
+		verifyVisible(By.xpath(String.format(FieldType, map.get(mapKeys.get(3)).toString())), 0);
+		if (map.get(mapKeys.get(3)).toString().toLowerCase().equals("base")) {
+			verifyVisible(By.xpath(String.format(ComponentType, map.get(mapKeys.get(4)).toString())), 0);
+			switch (map.get(mapKeys.get(4)).toString().toLowerCase()) {
+			case "textbox":
+				verifyVisible(By.xpath(String.format(DataType, map.get(mapKeys.get(5)).toString())), 0);
+				if (!map.get(mapKeys.get(6)).toString().trim().equals("")) {
+					verifyVisible(By.xpath(String.format(RegEx, map.get(mapKeys.get(6)).toString())), 0);
+				}
+				verifyVisible(By.xpath(String.format(ValidationMessage, map.get(mapKeys.get(7)).toString())), 0);
+				break;
+			case "dropdown":
+				if (!map.get(mapKeys.get(18)).toString().equals("")) {
+					verifyVisible(By.xpath(String.format(ValueSource, map.get(mapKeys.get(18)).toString())), 0);
+				}
+				String[] fieldNameList = map.get(mapKeys.get(12)).toString().split(",");
+				for (int m = 0; m < fieldNameList.length; m++) {
+					verifyVisible(By.xpath(String.format(fieldName, fieldNameList[m])), 0);
+				}
+				break;
+			case "checkbox":
+				verifyVisible(By.xpath(String.format(ChildField, map.get(mapKeys.get(8)).toString())), 0);
+
+				break;
+			case "radiobutton":
+				verifyVisible(By.xpath(String.format(ChildField, map.get(mapKeys.get(8)).toString())), 0);
+				break;
+			case "label":
+				verifyVisible(By.xpath(String.format(PossibleValue, map.get(mapKeys.get(9)).toString())), 0);
+				break;
+			case "datepicker":
+				break;
+			case "fileselector":
+				if (!map.get(mapKeys.get(3)).toString().trim().equals(""))
+					verifyVisible(By.xpath(String.format(RegEx, map.get(mapKeys.get(6)).toString())), 0);
+				verifyVisible(By.xpath(String.format(ValidationMessage, map.get(mapKeys.get(7)).toString())), 0);
+				break;
+			case "hyperlink":
+				verifyVisible(By.xpath(String.format(PossibleValue, map.get(mapKeys.get(9)).toString())), 0);
+				break;
+			case "password":
+				verifyVisible(By.xpath(String.format(DataType, map.get(mapKeys.get(5)).toString())), 0);
+				if (!map.get(mapKeys.get(6)).toString().trim().equals(""))
+					verifyVisible(By.xpath(String.format(RegEx, map.get(mapKeys.get(6)).toString())), 0);
+				verifyVisible(By.xpath(String.format(ValidationMessage, map.get(mapKeys.get(7)).toString())), 0);
+				break;
+			}
+		} else {
+			String[] fieldNameList = map.get(mapKeys.get(11)).toString().split(",");
+			for (int m = 0; m < fieldNameList.length; m++) {
+				verifyVisible(By.xpath(String.format(fieldName, fieldNameList[m])), 0);
+			}
+		}
+	}
+
+	public void deleteParameter(Map<Object, Object> map, List<Object> mapKeys) {
+		filterSearch(map.get(mapKeys.get(1)).toString(), map.get(mapKeys.get(2)).toString(),
+				map.get(mapKeys.get(3)).toString(), true);
+		verifyVisible(By.xpath(String.format(verifyElement, map.get(mapKeys.get(1)).toString())), 0);
+		common.clickOnInfoBtn(map.get(mapKeys.get(1)).toString());
+		common.delete();
+	}
+
+	public boolean verifyDeletedParameter(Map<Object, Object> map, List<Object> mapKeys) {
+		filterSearch(map.get(mapKeys.get(1)).toString(), map.get(mapKeys.get(2)).toString(),
+				map.get(mapKeys.get(3)).toString(), true);
+		boolean res = veifyElementIsNotVisible(
+				By.xpath(String.format(verifyElement, map.get(mapKeys.get(1)).toString())));
+		if (!res) {
+			int[] a = { 0 };
+			exceptionOnFailure(res, "Element = " + String.format(verifyElement, map.get(mapKeys.get(1)).toString())
+					+ " is still visble", a);
+		}
+		return res;
+	}
+
 }
